@@ -24,7 +24,8 @@ class Snake:
             self.update_count_max = 2
             self.update_count = 0
             self.build_pos(pos, direction)
-            self.new_pos=deque()
+            self.new_pos = deque()
+            self.prev_pos = deque()
 
             
 
@@ -57,6 +58,7 @@ class Snake:
             self.build_pos(pos, direction)
             
         def update(self, move):
+            self.prev_pos=self.pos.copy()
             head = self.head()
             self.new_pos.clear()
             for i in range(move.norm):
@@ -79,7 +81,7 @@ class Snake:
         
         def inGrid(self, grid_size):
             head = self.head()
-            if head[0]<0 or head[1]<0 or head[0] >= grid_size or head[1] >= grid_size:
+            if head[0]<=0 or head[1]<=0 or head[0] >= grid_size or head[1] >= grid_size:
                 return False
             return True
 
@@ -99,9 +101,11 @@ class Snake:
             return move.apply(self.head())
         
         def eat_fruit(self, bonus):
+            self.size += bonus
             tail_pos = self.tail()
             for i in range(bonus):
                 self.pos.append(tail_pos)
+                
                 
         
         def __str__(self):
@@ -127,7 +131,7 @@ class SnakeEnv(gym.Env):
 
 
 
-    def __init__(self, num_agents=2, num_fruits=3, window_dimension=616, spacing=22, init_size=3):
+    def __init__(self, num_agents=2, num_fruits=3, window_dimension=800, spacing=20, init_size=3):
         self._running = True
 
         self._display_surf = None
@@ -135,7 +139,7 @@ class SnakeEnv(gym.Env):
         self._fruit_surf = None
 
         self.agents = []
-        self.fruits = []
+        self.candies = []
         self.num_agents = num_agents
         self.active_agents = num_agents
         self.num_fruits = num_fruits
@@ -143,7 +147,7 @@ class SnakeEnv(gym.Env):
 
         self.window_dimension = window_dimension
         self.spacing = spacing
-        self.grid_size = window_dimension/spacing
+        self.grid_size = window_dimension/spacing-1
         
         self.actions=[-1]*num_agents
 
@@ -157,7 +161,7 @@ class SnakeEnv(gym.Env):
 
         # Initialize goals
         for f in range(num_fruits):
-            self.fruits.append(self._generate_goal())
+            self.candies.append(self._rangen_candy())
 
 
         self.reward_range = (-1.0, 1.0)
@@ -172,7 +176,7 @@ class SnakeEnv(gym.Env):
 
     def step(self):
         new_obs = []
-        killed_on_step = [False] * self.num_agents
+        killed_on_step = [False] * len(self.agents)
         rewards = [0.0] * self.num_agents
         
 #        for i in range(self.num_agents):
@@ -190,11 +194,11 @@ class SnakeEnv(gym.Env):
             if not self.agents[i].alive: 
                 continue
         
-            for f_i, f in enumerate(self.fruits):
+            for f_i, f in enumerate(self.candies):
                 if s.onSnake(f):
-                    self.fruits[f_i] = self._generate_goal()
-                    s.size=s.size+1
+                    self.candies[f_i] = self._rangen_candy()
                     rewards[i] = 1.0
+                    s.eat_fruit(1)
 
             # does snake hit a wall?
             if not s.inGrid(self.grid_size):
@@ -203,15 +207,18 @@ class SnakeEnv(gym.Env):
 
             # does snake collide with another agent?
             for snake in self.agents:
-                if s.id != snake.id and s.interSnake(snake):
-                    print('kill ' +str(s.id) + ' ' + str(snake.id))
-                    killed_on_step[i]=True
+                if snake.alive:
+                    if s.alive and s.id != snake.id and s.interSnake(snake):
+                        print('kill ' +str(s.id) + ' ' + str(snake.id))
+                        killed_on_step[i]=True
 
         for i, k in enumerate(killed_on_step):
             if k:
+                self._add_candies(self.agents[i].prev_pos)
                 rewards[i] = -100.0
                 self.active_agents -= 1
                 self.agents[i].alive = False
+                
 
         done = False
         if self.active_agents == 0:
@@ -234,7 +241,7 @@ class SnakeEnv(gym.Env):
         for i, s in enumerate(self.agents):
             print(s)
 
-        for i, f in enumerate(self.fruits):
+        for i, f in enumerate(self.candies):
             self._pygame_draw(self._display_surf, self._fruit_surf, (f[0]*self.spacing, f[1]*self.spacing))
 
         for i, s in enumerate(self.agents):
@@ -256,7 +263,7 @@ class SnakeEnv(gym.Env):
             p._reset(x, y, direction)
 
         for f in range(self.num_fruits):
-            self.fruits[f] = self._generate_goal()
+            self.candies[f] = self._generate_goal()
 
         self.active_agents = self.num_agents
 
@@ -303,11 +310,15 @@ class SnakeEnv(gym.Env):
             self._display_surf.blit(self._wall_surf, (i, self.window_dimension - self.spacing))
 
 
-    def _generate_goal(self):
-        x = np.random.randint(0, self.grid_size) 
+    def _rangen_candy(self):
+
+        x = np.random.randint(1, self.grid_size) 
         y = np.random.randint(1, self.grid_size) 
 
         return (x, y)
+    
+    def _add_candies(self, pos):
+        self.candies += pos
 
 
     def _generate_obs(self, agent):
@@ -325,7 +336,7 @@ class SnakeEnv(gym.Env):
             for j in range(p.length):
                 obs[p.pos[j]] = 2
 
-        for i, f in enumerate(self.fruits):
+        for i, f in enumerate(self.candies):
             obs[f[0]][f[1]] = 3
 
         obs[:][0] = -1

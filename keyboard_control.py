@@ -34,11 +34,11 @@ while True:
             break  
 
         if (keys[K_UP]):
-            e.actions[index] = 3
+            e.actions[index] = 1
             break  
 
         if (keys[K_DOWN]):
-            e.actions[index] = 1
+            e.actions[index] = 3
             break  
     
    
