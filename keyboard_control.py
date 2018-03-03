@@ -7,7 +7,7 @@ import time
 
 
 num_agents = 3
-e = SnakeEnv(num_agents=num_agents, num_fruits=3)
+e = SnakeEnv(num_agents=num_agents, ncandies=3)
 e.render()
 
 step = 0
@@ -26,19 +26,19 @@ while True:
                 index = 0
 
         if (keys[K_RIGHT]):
-            e.actions[index] = 0
+            e.agents[index].nextAction(0)
             break  
 
         if (keys[K_LEFT]):
-            e.actions[index] = 2
+            e.agents[index].nextAction(2)
             break  
 
         if (keys[K_UP]):
-            e.actions[index] = 1
+            e.agents[index].nextAction(1)
             break  
 
         if (keys[K_DOWN]):
-            e.actions[index] = 3
+            e.agents[index].nextAction(3)
             break  
     
    
