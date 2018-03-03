@@ -1,0 +1,42 @@
+# FAQ
+
+## DO WE HAVE TO SUBMIT OUR CODE?
+
+You should include a link in the report to your code. This should be sufficient.
+But to be sure (that your code is recorded / that there are no issues with the
+link), you can submit a copy (in .zip) to Moodle along with the final version 
+of your report.
+
+
+## ARE WE GRADED ON OUR CODE?
+
+Your grade is not affected by the quality of your code. However, you are graded
+on the reproducibility of your results: your code should be available and
+working, and executable using any of the technologies/libraries from the labs. 
+
+It is recommended to include a demo script to run at least a part of your code
+with the least effort possible.
+
+You can borrow as much code from elsewhere as you wish but YOU MUST acknowledge
+this. Obviously if you 'borrowed' a lot of code from somewhere you would be
+expected to make a relatively more sophisticated analysis to compensate.
+
+
+## HOW CAN WE MAKE CODE AVAILABLE ANONYMOUSLY? 
+
+There are several ways to create an anonymous link to code. If you don't find
+one which suits your needs, simply send a zip file to one of the teaching team 
+with your code and we can make an anonymous link for you to add to your report. 
+
+
+## WHAT IS THIS ALIFE ENVIRONMENT? WHAT ARE WE SUPPOSED TO DO WITH THIS?
+
+You can adapt and apply your agent to this environment, and explain the results. 
+In one of the labs, we demo this environment. If your chosen/designed agent
+cannot be adatped for this environment - simply explain why.
+
+
+## WE HAVE AN IDEA OF AN AGENT/ENVIRONMENT FOR THE PROJECT - IS IT SUITABLE?
+
+Indeed, it is good to check first if an idea is feasible if you are not sure. 
+Send an email to, or approach one of the teaching coordinators during the labs.

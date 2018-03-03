@@ -1,0 +1,53 @@
+# Grading Guidelines for the Report
+
+The following is an indication of how the project will be graded. You will also
+be given feedback on your report. 
+
+NOTE: the following is provided in the context of providing more information 
+about writing the report and doing the project; it is separate from to the 
+review form (review.txt) that you will follow when commenting on other work.
+
+
+Of 70 available points:
+
+## [15 points] Background material and presentation 
+
+	 The report should be easy to follow for someone who is familiar with the
+	 lecture material; the relevant background material for understanding the
+	 report should be clearly and correctly explained, and any closely-related
+	 existing agent/environment setups should be mentioned/cited. The report
+	 should not go over the page limit.
+
+## [10 points] The environment 
+
+	Suitability of the environment. Novelty, difficulty, implementation,
+	understanding. If the environment is not novel, more emphasis should be
+	placed on understanding of its challenges, etc.
+
+## [10 points] The agent 
+
+	Suitability to environment (choice of agent), design, implementation,
+	parameterization, understanding.
+
+## [25 points] Results and discussion 
+
+	Show understanding and interpretation of results. Explaining/demonstrating
+	the strengths and weaknesses of the agent, the problems posed by the
+	environment; via tables, graphs, etc. 
+	
+	This includes 5 points for the application to the ALife environment: a
+	paragraph or two of explaining the (non-)applicability of your agent is
+	the minimum expectation for this. 
+
+	Note: this includes availability of code, and ability to reproduce results.
+	You are highly encouraged to include a README file and a demo script. 
+
+	Either in the README file, or in the report, you must outline which parts of
+	your code are original and which parts you credit from elsewhere. 
+
+## [10 points] Bonus points.
+
+	A (maximum) number of points distributed to the best aspects of the report.
+	For example, if you made an special effort on the design of an environment,
+	or if you made an in-depth analysis on deployment to the ALife environment. 
+

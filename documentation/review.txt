@@ -1,0 +1,22 @@
+#### Respond to each point below with a few words / up to one paragraph per point ####
+
+# Summarize the report/paper in your own words (one paragraph); mentioning in particular the scope (which topics from the course are covered?)
+
+# Identify three strong points of the paper
+ 
+# Presentation - could you follow the text easily? Were there sufficient explanations/figures/tables/diagrams?
+
+# Reproducibility - is the code available, can you run it? 
+
+# Background and Related Work - do the authors adequately/correctly explain the required background material, and acknowledge closely-related work?
+
+# Proposed Environment - What are the main challenges that you see for an agent in this environment?
+
+# Proposed Agent - Is the agent well motivated/justified/designed for the challenges of the proposed environment?
+
+
+#### Write a few paragraphs on the following ####
+
+# Results and Discussion - Could the agent 'solve' the environment? In either case (yes or no) are results sufficient to get an idea of how it performs? Does the interpretation of results seem correct, or does anything seems surprising? Are the strengths and the weaknesses of the agent explained? Are there any other simulations/results that could be of value for further analysis?
+
+# Suggested Changes - Summarize your suggestions regarding points that could be improved and how to improve them
