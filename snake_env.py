@@ -22,7 +22,7 @@ class Snake:
             self.new_pos = deque()
             self.prev_pos = deque()
 
-            
+
 
         def build_pos(self, pos, direction):
             self.pos = deque()
@@ -30,8 +30,9 @@ class Snake:
             y=pos[1]
             self.next_action=direction
             
+
             for i in range(self.size):
-                
+
                 if self.direction == 0:
                     self.pos.append((x - i, y))
 
@@ -43,16 +44,16 @@ class Snake:
 
                 if self.direction == 3:
                     self.pos.append((x, y + i))
-                    
-            
+
+
         def _reset(self, pos, direction):
             self.size = self.init_size
 
             self.update_count = 0
             self.direction = direction
-            
+
             self.build_pos(pos, direction)
-            
+
         def update(self):
             self.prev_pos=self.pos.copy()
             move = Move(self.next_action)
@@ -64,19 +65,19 @@ class Snake:
                 p=(head[0]+i*move.dir[0], head[1]+i*move.dir[1])
                 self.pos.appendleft(p)
                 self.new_pos.appendleft(p)
-        
+
         def interSnake(self, snake):
             for position in self.new_pos:
                 if position in snake.pos:
                     return True
             return False
-                
-                
-                
+
+
+
         def onSnake(self, pos):
             return pos in self.pos
         
-        def inGrid(self, gridsize):
+        def inGrid(self, grid_size):
             head = self.head()
             if head[0]<0 or head[1]<0 or head[0] >= gridsize or head[1] >= gridsize:
                 return False
@@ -88,38 +89,39 @@ class Snake:
                 return False
             return True
 
+
         def head(self):
             return self.pos[0]
-        
+
         def tail(self):
             return self.pos[-1]
-        
+
         def next_pos(self, move):
             return move.apply(self.head())
-        
+
         def eat_candy(self, bonus):
             self.size += bonus
             tail_pos = self.tail()
             for i in range(bonus):
                 self.pos.append(tail_pos)
-                
+
         def nextAction(self, move_type):
             self.next_action = move_type
-                
-                
-        
+
+
+
         def __str__(self):
             s='Snake ' + str(self.id)
             if self.alive:
                 s += ' is alive and positionned at '
                 for p in self.pos:
-                    s += str(p) + ' ' 
+                    s += str(p) + ' '
             else:
                 s+= ' is not more alive and the last known position is'
                 for p in self.pos:
-                    s += str(p) + ' ' 
+                    s += str(p) + ' '
             return s
-        
+
 
 class Render():
 
@@ -136,9 +138,70 @@ class Render():
         self.map = M
         
 
-        assert self.window_dimension % self.spacing == 0, "window_dimension needs to be a multiple of spacing"
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
-        self._pygame_init()
+
+    def step(self):
+        new_obs = []
+        killed_on_step = [False] * len(self.agents)
+        rewards = [0.0] * self.num_agents
+
+#        for i in range(self.num_agents):
+#            print('snake number ' + str(i))
+#            print(self.agents[i])
+
+
+        for s in self.agents:
+            s.update()
+
+        for i, s in enumerate(self.agents):
+            # Did a snake eat an apple?
+            if not self.agents[i].alive: 
+                continue
+
+            toRemove = []
+            for c_i, c in enumerate(self.candies):
+                if s.onSnake(c):
+                    toRemove.append(c)
+                    rewards[i] = 1.0
+                    s.eat_candy(1)
+            for c in toRemove:
+                self.candies.remove(c)
+
+            # does snake hit a wall?
+            if not s.inGrid(self.grid_size):
+                killed_on_step[i] = True
+
+
+            # does snake collide with another agent?
+            for snake in self.agents:
+                if snake.alive:
+                    if s.alive and s.id != snake.id and s.interSnake(snake):
+                        print('kill ' +str(s.id) + ' ' + str(snake.id))
+                        killed_on_step[i]=True
+
+        for i, k in enumerate(killed_on_step):
+            if k:
+                self._add_candies(self.agents[i].prev_pos)
+                rewards[i] = -100.0
+                self.active_agents -= 1
+                self.agents[i].alive = False
+
+
+        done = False
+        if self.active_agents == 0:
+            done = True
+
+        self._check_ncandies()
+
+#        for i in range(self.num_agents):
+#            ob = self._generate_obs(i)
+#            new_obs.append(ob)
+
+        return deepcopy(new_obs), deepcopy(rewards), done, {}
+
 
     def render(self, mode='human'):
         print('pygame_init ' + str(self._running))
@@ -146,12 +209,7 @@ class Render():
             self._running = False
 
         self._draw_env()
-        
-        for i, s in enumerate(self.map.agents):
-            print(s)
-
         for i, f in enumerate(self.map.candies):
-            print(f)
             self._pygame_draw(self._display_surf, self._fruit_surf, f)
 
         for i, s in enumerate(self.map.agents):
@@ -170,6 +228,40 @@ class Render():
     def _pygame_draw(self, surface, image, pos):
         surface.blit(image, ((pos[0]+1)*self.spacing, (pos[1]+1)*self.spacing))
 
+
+    def reset(self):
+        for i, p in enumerate(self.agents):
+            self.agents[i].alive = True
+
+            x = np.random.randint(1, self.max_spawn_idx - 1) * self.spacing
+            y = np.random.randint(1, self.max_spawn_idx - 1) * self.spacing
+            direction = np.random.randint(0, 1)
+
+            p._reset(x, y, direction)
+
+        for f in range(self.ncandies):
+            self.candies[f] = self._generate_goal()
+
+        self.active_agents = self.num_agents
+
+
+    def close(self):
+        pygame.quit()
+
+
+    def _create_agent(self, i, init_size):
+
+        x = np.random.randint(init_size, self.grid_size - init_size)
+        y = np.random.randint(init_size, self.grid_size - init_size)
+        direction = np.random.randint(0, 4)
+
+        agent = Snake(i, (x,y), direction=direction, size=init_size)
+        agent.color_i = i % len(self.AGENT_COLORS)
+        agent.nextAction(direction)
+
+#        print('Snake ' + str(i))
+#        print(self.actions[i])
+
     def close(self):
         pygame.quit()   
     
@@ -186,14 +278,15 @@ class Render():
             self._display_surf.blit(self._wall_surf, (i, 0))
             self._display_surf.blit(self._wall_surf, (i, self.window_dimension - self.spacing))
 
+
     def _generate_obs(self, agent):
         obs = np.zeros((self.window_dimension, self.window_dimension))
 
-        if not self.agents[agent].alive: 
+        if not self.agents[agent].alive:
             return -1 * np.ones((self.window_dimension, self.window_dimension))
 
         for i in range(self.agents[agent].size):
-            
+
             obs[self.agents[agent].pos[i]] = 1
 
         for i, p in enumerate(self.agents):
@@ -223,7 +316,7 @@ class Render():
             image_surf = pygame.Surface([self.spacing - 4, self.spacing - 4])
             image_surf.fill(self.map.COLORS[i % len(self.map.COLORS)])
             self._agent_surfs.append(image_surf)
-        
+
         image_surf = pygame.Surface([self.spacing - 4, self.spacing - 4])
         image_surf.fill((150,150,150))
         self._agent_surfs.append(image_surf)
@@ -233,11 +326,11 @@ class Render():
 
         self._wall_surf = pygame.Surface([self.spacing - 4, self.spacing - 4])
         self._wall_surf.fill((255, 255, 255))
-        
-        
+
+
 class Move:
 
-    
+
     def __init__(self, move_type):
         self.type = move_type
         if move_type==0:
@@ -249,11 +342,11 @@ class Move:
         if move_type==3:
             self.dir=(0,1)
         self.norm=1
-            
-        
+
+
     def apply(self, point):
         return (point[0]+self.norm*self.direction[0], point[1]+self.norm*self.direction[1])
-    
+
     def __str__(self):
         return 'Direction ' + str(self.dir) + ' with norm '  + str(self.norm)
     
@@ -430,3 +523,4 @@ class Map():
 
 
     
+
