@@ -1,4 +1,3 @@
-
         
 def minimax(agent_id, my_agent_id, M, depth):
     """
@@ -13,7 +12,7 @@ def minimax(agent_id, my_agent_id, M, depth):
         (value, move)=minimax((agent_id+1)%M.nagents, my_agent_id, M)
         M.reverseLast()
     if depth==0:
-        return evaluate(M, my_agent_id), -1
+        return M.evaluate(my_agent_id), -1
     
     
     if agent_id == my_agent_id:
@@ -38,7 +37,7 @@ def minimax(agent_id, my_agent_id, M, depth):
                 minarg=move.type
             M.reverseLast()
         return (minv, minarg)
-            
+                
             
         
         

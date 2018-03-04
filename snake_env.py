@@ -54,9 +54,9 @@ class Snake:
 
             self.build_pos(pos, direction)
 
-        def update(self):
+        def update(self, move):
             self.prev_pos=self.pos.copy()
-            move = Move(self.next_action)
+            move = Move(move)
             head = self.head()
             self.new_pos.clear()
             for i in range(move.norm):
@@ -72,18 +72,16 @@ class Snake:
                     return True
             return False
 
-
-
         def onSnake(self, pos):
             return pos in self.pos
         
-        def inGrid(self, grid_size):
+        def inGrid(self, gridsize):
             head = self.head()
             if head[0]<0 or head[1]<0 or head[0] >= gridsize or head[1] >= gridsize:
                 return False
             return True
         
-        def inGridMove(self, gridsize, move):
+        def inGridAfterMove(self, gridsize, move):
             next_head = move.apply(self.head())
             if next_head[0]<0 or next_head[1]<0 or next_head[0] >= gridsize or next_head[1] >= gridsize:
                 return False
@@ -262,8 +260,6 @@ class Render():
 #        print('Snake ' + str(i))
 #        print(self.actions[i])
 
-    def close(self):
-        pygame.quit()   
     
 
     def _draw_env(self):
@@ -380,6 +376,9 @@ class Map():
         self.createAgents()
         self.createCandies()
         
+        self.previous_states= deque()
+        self.endturns=deque()
+        
 
 
         self.reward_range = (-1.0, 1.0)
@@ -432,7 +431,7 @@ class Map():
             self.candies.add(point)
     
     #chech if there is the right number of candies on the board
-    def chechCandies(self):
+    def checkCandies(self):
         while len(self.candies)<self.ncandies:
             self.candies.add(self.genCandy())
     
@@ -489,10 +488,86 @@ class Map():
         if len(self.activeAgents)== 0:
             done = True
             
-        self.chechCandies()
+        self.checkCandies()
 
 
         return rewards, done
+    
+    def update(self, agent_id, move):
+        agent=self.agents[agent_id]
+        agent.updated=True
+        added_candies = []
+        removed_candies = []
+        size_change=0
+        dead=None
+        if move==-1:
+            dead=agent_id
+            agent.alive=False
+            self.addCandies(agent.pos)
+            added_candies=agent.pos
+            size_change = -agent.size
+        else:
+            prev_tail=[agent.pos[-1]]
+            agent.update(move)
+            for c in self.candies:
+                if agent.onSnake(c):
+                    removed_candies.append(c)
+                    agent.eat_candy(1)
+                    size_change+=1
+            for c in removed_candies:
+                self.candies.remove(c)
+                
+        self.previous_states.add((agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead))
+        
+    def revertLastUpdate(self):
+        (agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead)=self.previous_states.pop()
+        for c in added_candies:
+            self.candies.remove(c)
+        for c in removed_candies:
+            self.candies.add(c)
+        agent=self.agents[agent_id]
+        agent.updated=False
+        if dead==agent_id:
+            agent.alive=True
+        else:
+            agent.pos.popleft()
+            agent.size -= size_change
+            for i in range(size_change):
+                agent.pos.popleft()
+            agent.add(prev_tail)
+            
+    def endturnOperations(self):
+        killed=[]
+        added_candies = []
+        
+        for i in range(len(self.activeAgents)):       
+            for j in range(i+1, len(self.activeAgents)):
+                if self.agents[i].pos[0]==self.agents[j].pos[0]:
+                    self.agents[i].alive=False
+                    self.agents[j].alive=False
+                    killed.append(i)
+                    killed.append(j)
+                    for p in self.agents[i].pos:
+                        added_candies.append(p)
+                        self.candies.add(p)
+                    for p in self.agents[j].pos:
+                        added_candies.append(p)
+                        self.candies.add(p)
+        while len(self.candies)<self.ncandies:
+            p=self.genCandy()
+            added_candies.append(p)
+            self.candies.add(p)
+            
+        self.endturns.add((killed, added_candies))
+        
+    def revertEndturn(self):
+        (killed, added_candies) = self.endturns.pop()
+        for i in killed:
+            self.agents[i].alive=True
+            
+        for c in added_candies:
+            self.candies.remove(c)
+
     
     def win(self, agent_id):
         return len(self.activeAgents)==1 and agent_id in self.activeAgents
@@ -512,14 +587,34 @@ class Map():
             return -self.gridsize**2
         return self.agents[agent_id].size
     
-    def possiblesMoves(self, agent):
+    def possibilities(self, agent_id):
+        agent=self.agents[agent_id]
         moves = []
         for move in self.MOVES:
-            if agent.inGridMove(self.gridsize, move) and move.type != agent.next_action:
-                moves.append(move)
+            if agent.inGridMove(self.gridsize, move) and move.type != (agent.next_action+2)%4:
+                head_after_move = move.apply(agent.head())
+                legal_move=True
+                for s_id in self.activeAgents:
+                    if not s_id!=agent_id:
+                        if self.agents[s_id].updated and head_after_move in self.agents[s_id].pos:
+                            legal_move = False
+                            break
+                        if not self.agents[s_id].updated and head_after_move in self.agents[s_id].pos[:-1]:
+                            legal_move =False
+                            break
+                if legal_move:
+                    moves.append(move)
         return moves
     
-
+    def evaluate(self, my_agent_id):
+        head = self.agents[my_agent_id]
+        mind = np.float('inf')
+        for c in self.candies:
+            mind=min(mind,abs(c[0]-head[0])+abs(c[1]-head[1]))
+        return mind
+                
+                
+    
 
     
 
