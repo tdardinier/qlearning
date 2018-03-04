@@ -2,12 +2,13 @@ import numpy as np
 from pygame.locals import *
 import pygame
 
-from snake_env import SnakeEnv
+from snake_env import Render, Map
 import time
 
 
-num_agents = 3
-e = SnakeEnv(num_agents=num_agents, ncandies=3)
+nagents = 3
+M = Map(nagents=nagents, ncandies=3, gridsize=40)
+e = Render(M, spacing=20)
 e.render()
 
 step = 0
@@ -22,29 +23,29 @@ while True:
 
         if np.any(keys[49:58]):
             index = keys[49:58].index(1)
-            if index > num_agents:
+            if index > nagents:
                 index = 0
 
         if (keys[K_RIGHT]):
-            e.agents[index].nextAction(0)
+            M.agents[index].nextAction(0)
             break  
 
         if (keys[K_LEFT]):
-            e.agents[index].nextAction(2)
+            M.agents[index].nextAction(2)
             break  
 
         if (keys[K_UP]):
-            e.agents[index].nextAction(1)
+            M.agents[index].nextAction(1)
             break  
 
         if (keys[K_DOWN]):
-            e.agents[index].nextAction(3)
+            M.agents[index].nextAction(3)
             break  
     
    
     step+=1
 
-    obs, r, done, _ = e.step()
+    r, done = M.step()
 
 #    if done:
 #        e.reset()

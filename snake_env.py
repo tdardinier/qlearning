@@ -1,14 +1,9 @@
-import math
-import gym
 from gym import spaces, logger
 from gym.utils import seeding
 import numpy as np
 from copy import deepcopy
 
-from pygame.locals import *
 import pygame
-import time
-from copy import deepcopy
 
 from collections import deque
 
@@ -33,6 +28,7 @@ class Snake:
             self.pos = deque()
             x=pos[0]
             y=pos[1]
+            self.next_action=direction
             
             for i in range(self.size):
                 
@@ -80,18 +76,18 @@ class Snake:
         def onSnake(self, pos):
             return pos in self.pos
         
-        def inGrid(self, grid_size):
+        def inGrid(self, gridsize):
             head = self.head()
-            if head[0]<=0 or head[1]<=0 or head[0] >= grid_size or head[1] >= grid_size:
+            if head[0]<0 or head[1]<0 or head[0] >= gridsize or head[1] >= gridsize:
+                return False
+            return True
+        
+        def inGridMove(self, gridsize, move):
+            next_head = move.apply(self.head())
+            if next_head[0]<0 or next_head[1]<0 or next_head[0] >= gridsize or next_head[1] >= gridsize:
                 return False
             return True
 
-        
-        def _draw(self, surface, image, image_head, spacing):
-            surface.blit(image_head, (self.pos[0][0]*spacing, self.pos[0][1]*spacing))
-            for i in range(1, self.size):
-                surface.blit(image, (self.pos[i][0]*spacing, self.pos[i][1]*spacing))
-        
         def head(self):
             return self.pos[0]
         
@@ -125,118 +121,24 @@ class Snake:
             return s
         
 
-class SnakeEnv(gym.Env):
-    AGENT_COLORS = [
-        (0, 255, 0),
-        (0, 0, 255),
-        (255, 255, 0),
-        (255, 0, 255),
-    ]
+class Render():
 
-
-
-    def __init__(self, num_agents=2, ncandies=3, window_dimension=800, spacing=20, init_size=3):
+    def __init__(self, M, spacing=20):
         self._running = True
 
         self._display_surf = None
         self._image_surf = None
         self._fruit_surf = None
 
-
-        self.active_agents = num_agents
-        self.num_agents = num_agents
-        self.ncandies = ncandies
-        self.init_size = init_size
-        
-        self.agents = []
-        self.candies = set()
-
-        self.window_dimension = window_dimension
+        self.window_dimension = (M.gridsize+2)*spacing
         self.spacing = spacing
-        self.grid_size = window_dimension/spacing-1
+        
+        self.map = M
         
 
         assert self.window_dimension % self.spacing == 0, "window_dimension needs to be a multiple of spacing"
 
-        self.max_spawn_idx = self.window_dimension / self.spacing - self.init_size
-        for i in range(self.num_agents):
-            agent = self._create_agent(i, self.init_size)
-            self.agents.append(agent)
-
-
-        while len(self.candies)<self.ncandies:
-            self.candies.add(self._rangen_candy())
-
-
-        self.reward_range = (-1.0, 1.0)
-
         self._pygame_init()
-
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
-
-    def step(self):
-        new_obs = []
-        killed_on_step = [False] * len(self.agents)
-        rewards = [0.0] * self.num_agents
-        
-#        for i in range(self.num_agents):
-#            print('snake number ' + str(i))
-#            print(self.agents[i])
-
-
-        for s in self.agents:
-            s.update()
-
-        for i, s in enumerate(self.agents):
-            # Did a snake eat an apple?
-            if not self.agents[i].alive: 
-                continue
-            
-            toRemove = []
-            for c_i, c in enumerate(self.candies):
-                if s.onSnake(c):
-                    toRemove.append(c)
-                    rewards[i] = 1.0
-                    s.eat_candy(1)
-            for c in toRemove:
-                self.candies.remove(c)
-
-            # does snake hit a wall?
-            if not s.inGrid(self.grid_size):
-                killed_on_step[i] = True
-                
-
-            # does snake collide with another agent?
-            for snake in self.agents:
-                if snake.alive:
-                    if s.alive and s.id != snake.id and s.interSnake(snake):
-                        print('kill ' +str(s.id) + ' ' + str(snake.id))
-                        killed_on_step[i]=True
-
-        for i, k in enumerate(killed_on_step):
-            if k:
-                self._add_candies(self.agents[i].prev_pos)
-                rewards[i] = -100.0
-                self.active_agents -= 1
-                self.agents[i].alive = False
-                
-
-        done = False
-        if self.active_agents == 0:
-            done = True
-            
-        self._check_ncandies()
-
-#        for i in range(self.num_agents):
-#            ob = self._generate_obs(i)
-#            new_obs.append(ob)
-
-        return deepcopy(new_obs), deepcopy(rewards), done, {}
-
 
     def render(self, mode='human'):
         print('pygame_init ' + str(self._running))
@@ -245,54 +147,32 @@ class SnakeEnv(gym.Env):
 
         self._draw_env()
         
-        for i, s in enumerate(self.agents):
+        for i, s in enumerate(self.map.agents):
             print(s)
 
-        for i, f in enumerate(self.candies):
-            self._pygame_draw(self._display_surf, self._fruit_surf, (f[0]*self.spacing, f[1]*self.spacing))
+        for i, f in enumerate(self.map.candies):
+            print(f)
+            self._pygame_draw(self._display_surf, self._fruit_surf, f)
 
-        for i, s in enumerate(self.agents):
-            if not self.agents[i].alive: 
-                continue
-            s._draw(self._display_surf, self._agent_surfs[s.color_i], self._agent_surfs[-1], self.spacing)
+        for i, s in enumerate(self.map.agents):
+            if s.alive: 
+                self._draw_snake(s)
 
         pygame.display.flip()
+        
+    def _draw_snake(self, snake):
+        if snake.alive:
+            self._pygame_draw(self._display_surf, self._agent_surfs[-1], snake.pos[0])
+            for i in range(1, (len(snake.pos))):
+                self._pygame_draw(self._display_surf, self._agent_surfs[snake.color_i], snake.pos[i])
 
-
-    def reset(self):
-        for i, p in enumerate(self.agents):
-            self.agents[i].alive = True
-
-            x = np.random.randint(1, self.max_spawn_idx - 1) * self.spacing
-            y = np.random.randint(1, self.max_spawn_idx - 1) * self.spacing
-            direction = np.random.randint(0, 1) 
-            
-            p._reset(x, y, direction)
-
-        for f in range(self.ncandies):
-            self.candies[f] = self._generate_goal()
-
-        self.active_agents = self.num_agents
-
+                
+    def _pygame_draw(self, surface, image, pos):
+        surface.blit(image, ((pos[0]+1)*self.spacing, (pos[1]+1)*self.spacing))
 
     def close(self):
-        pygame.quit()    
-
-
-    def _create_agent(self, i, init_size):
-        
-        x = np.random.randint(init_size, self.grid_size - init_size) 
-        y = np.random.randint(init_size, self.grid_size - init_size) 
-        direction = np.random.randint(0, 4)
-
-        agent = Snake(i, (x,y), direction=direction, size=init_size)
-        agent.color_i = i % len(self.AGENT_COLORS)
-        agent.nextAction(direction)
-        
-#        print('Snake ' + str(i))
-#        print(self.actions[i])
-
-        return deepcopy(agent)
+        pygame.quit()   
+    
 
 
     def _draw_env(self):
@@ -305,22 +185,6 @@ class SnakeEnv(gym.Env):
         for i in range(0, self.window_dimension, self.spacing):
             self._display_surf.blit(self._wall_surf, (i, 0))
             self._display_surf.blit(self._wall_surf, (i, self.window_dimension - self.spacing))
-
-
-    def _rangen_candy(self):
-
-        x = np.random.randint(1, self.grid_size) 
-        y = np.random.randint(1, self.grid_size) 
-
-        return (x, y)
-    
-    def _add_candies(self, pos):
-        self.candies = self.candies.union(pos)
-        
-    def _check_ncandies(self):
-        while len(self.candies)<self.ncandies:
-            self.candies.add(self._rangen_candy())
-
 
     def _generate_obs(self, agent):
         obs = np.zeros((self.window_dimension, self.window_dimension))
@@ -336,7 +200,6 @@ class SnakeEnv(gym.Env):
             if self.killed[i]: continue
             for j in range(p.length):
                 obs[p.pos[j]] = 2
-
         for i, f in enumerate(self.candies):
             obs[f[0]][f[1]] = 3
 
@@ -349,9 +212,6 @@ class SnakeEnv(gym.Env):
         return deepcopy(obs)
 
 
-    def _pygame_draw(self, surface, image, pos):
-        surface.blit(image, (pos[0], pos[1]))
-
 
     def _pygame_init(self):
         pygame.init()
@@ -359,9 +219,9 @@ class SnakeEnv(gym.Env):
         self._agent_surfs = []
         self._running = True
 
-        for i, p in enumerate(self.agents):
+        for i, p in enumerate(self.map.agents):
             image_surf = pygame.Surface([self.spacing - 4, self.spacing - 4])
-            image_surf.fill(self.AGENT_COLORS[i % len(self.AGENT_COLORS)])
+            image_surf.fill(self.map.COLORS[i % len(self.map.COLORS)])
             self._agent_surfs.append(image_surf)
         
         image_surf = pygame.Surface([self.spacing - 4, self.spacing - 4])
@@ -379,6 +239,7 @@ class Move:
 
     
     def __init__(self, move_type):
+        self.type = move_type
         if move_type==0:
             self.dir=(1,0)
         if move_type==1:
@@ -396,9 +257,176 @@ class Move:
     def __str__(self):
         return 'Direction ' + str(self.dir) + ' with norm '  + str(self.norm)
     
-class Map(np.ndarray):
-    def __new__(cls, height, width):
-        return np.zeros((height, width))
     
-    def set(self, pos, value):
+    
+class Map():
+    COLORS = [
+        (0, 255, 0),
+        (0, 0, 255),
+        (255, 255, 0),
+        (255, 0, 255),
+    ]
+    MOVES = [
+        Move((1,0)),
+        Move((0,-1)),
+        Move((-1,0)),
+        Move((0,1))
+    ]
+    
+    def __init__(self, nagents=2, ncandies=3, gridsize=40, max_iter=100):
+
+        self.gridsize = gridsize
+        self.nagents = nagents
+        self.ncandies = ncandies
+        self.iters=0
+        self.max_iter=max_iter
+        
+        self.agents = []
+        self.activeAgents = set()
+        self.candies = set()
+        
+        self.createAgents()
+        self.createCandies()
+        
+
+
+        self.reward_range = (-1.0, 1.0)
+        
+    def createAgents(self):
+        for i in range(self.nagents):
+            agent = self.genAgent(i)
+            self.agents.append(agent)
+            self.activeAgents.add(i)
+    
+    def createCandies(self):
+        for i in range(self.ncandies):
+            candy = self.genCandy()
+            self.candies.add(candy)
+        
+    def genAgent(self, i, init_size=2):
+        
+        noIntersection=False
+        while not noIntersection:
+            #Draw initial head position and direction
+            x = np.random.randint(init_size-1, self.gridsize - init_size) 
+            y = np.random.randint(init_size-1, self.gridsize - init_size)
+            direction = np.random.randint(0, 4)
+    
+            agent = Snake(i, (x,y), direction=direction, size=init_size)
+            noIntersection=True
+            for point in agent.pos:
+                if self.interElements(point):
+                   noIntersection=False 
+            
+        agent.color_i = i % len(self.COLORS)
+        agent.nextAction(direction)
+            
+    #        print('Snake ' + str(i))
+    #        print(self.actions[i])
+
+        return agent
+    
+    #generate a candy randomly located among the free locations
+    def genCandy(self):
+        while True:
+            x = np.random.randint(0, self.gridsize) 
+            y = np.random.randint(0, self.gridsize) 
+            point = (x,y)
+            if not self.interElements(point):
+                return point
+            
+    def addCandies(self, pos):
+        for point in pos:
+            self.candies.add(point)
+    
+    #chech if there is the right number of candies on the board
+    def chechCandies(self):
+        while len(self.candies)<self.ncandies:
+            self.candies.add(self.genCandy())
+    
+    #Test if a position is free
+    def interElements(self, point):
+        if point in self.candies:
+            return True
+        for s in self.agents:
+            if s.onSnake(point):
+                return True
+        return False
+    
+    def setValue(self, pos, value):
         self[pos]=value
+        
+    def step(self):
+        self.iters += 1 
+        killed = [False] * self.nagents
+        rewards = [0.0] * self.nagents
+
+
+        for i in self.activeAgents:
+            self.agents[i].update()
+
+        for i in self.activeAgents:
+            s=self.agents[i]
+            toRemove = []
+            for c in self.candies:
+                if s.onSnake(c):
+                    toRemove.append(c)
+                    rewards[s.id] = 1.0
+                    s.eat_candy(1)
+            for c in toRemove:
+                self.candies.remove(c)
+
+            # does snake hit a wall?
+            if not s.inGrid(self.gridsize):
+                killed[s.id] = True                
+
+            # does snake collide with another agent?
+            for j in self.activeAgents:
+                if s.id != self.agents[j].id and s.interSnake(self.agents[j]):
+                        print('kill ' +str(s.id) + ' ' + str(self.agents[j].id))
+                        killed[s.id]=True
+
+        for i, k in enumerate(killed):
+            if k:
+                self.addCandies(self.agents[i].prev_pos)
+                rewards[i] = -100.0
+                self.activeAgents.remove(i)
+                self.agents[i].alive = False
+                
+        done = False
+        if len(self.activeAgents)== 0:
+            done = True
+            
+        self.chechCandies()
+
+
+        return rewards, done
+    
+    def win(self, agent_id):
+        return len(self.activeAgents)==1 and agent_id in self.activeAgents
+    
+    def lose(self, agent_id):
+        return len(self.activeAgents)==0 or not agent_id in self.activeAgents
+    
+    def finish(self):
+        self.iters == self.max_iter
+    
+    
+        
+    def score(self, agent_id):
+        if self.win(agent_id):
+            return self.gridsize**2
+        if self.lose(agent_id):
+            return -self.gridsize**2
+        return self.agents[agent_id].size
+    
+    def possiblesMoves(self, agent):
+        moves = []
+        for move in self.MOVES:
+            if agent.inGridMove(self.gridsize, move) and move.type != agent.next_action:
+                moves.append(move)
+        return moves
+    
+
+
+    
