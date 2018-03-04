@@ -5,16 +5,11 @@ import pygame
 from snake_env import Render, Map
 import time
 
-<<<<<<< HEAD
 
 nagents = 3
 M = Map(nagents=nagents, ncandies=3, gridsize=40)
 e = Render(M, spacing=20)
-=======
-num_agents = 3
-e = SnakeEnv(num_agents=num_agents, ncandies=3)
->>>>>>> 6757b2075352a545d00219c699941817ce899521
-e.render()
+
 
 step = 0
 while True:
