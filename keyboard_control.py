@@ -5,7 +5,6 @@ import pygame
 from snake_env import SnakeEnv
 import time
 
-
 num_agents = 3
 e = SnakeEnv(num_agents=num_agents, ncandies=3)
 e.render()
@@ -27,26 +26,24 @@ while True:
 
         if (keys[K_RIGHT]):
             e.agents[index].nextAction(0)
-            break  
+            break
 
         if (keys[K_LEFT]):
             e.agents[index].nextAction(2)
-            break  
+            break
 
         if (keys[K_UP]):
             e.agents[index].nextAction(1)
-            break  
+            break
 
         if (keys[K_DOWN]):
             e.agents[index].nextAction(3)
-            break  
-    
-   
+            break
     step+=1
 
     obs, r, done, _ = e.step()
+    time.sleep(0.05)
 
 #    if done:
 #        e.reset()
-
 time.sleep(50.0 / 1000.0)
