@@ -266,7 +266,6 @@ class Render():
         pygame.quit()   
     
 
-
     def _draw_env(self):
         self._display_surf.fill((0,0,0))
 
