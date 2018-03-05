@@ -12,12 +12,15 @@ MOVES = [
 ]
 
 vision_walls_max = 2
-odorat_candies_max = 8
+odorat_candies_max = 15
 odorat_snake_max = 10
 
 sensors = [vision_walls_max for _ in range(4)] + [odorat_candies_max for _ in range(4)]
 n_sensors = len(sensors)
 n_actions = 4
+
+file_to_use = "snake_15.csv"
+load_from_file = True
 
 epsilon = 0.1
 tau = 0.1
@@ -40,10 +43,11 @@ class IA():
         self.last_y = 0
         self.id = agent_id
         self.current_input = None
-
         self.q = ones((n_states, n_actions)) * 0.5
         if not (save is None):
             self.q = save
+        elif load_from_file:
+            self.q = loadtxt(file_to_use, delimiter=",")
 
     def __str__(self):
         return ("Simple Qlearning agent: ", self.q)
@@ -161,6 +165,10 @@ class IA():
         print("")
 
     def act(self, M, reward):
+        pygame.event.pump()
+        keys = pygame.key.get_pressed()
+        if (keys[K_s]):
+            savetxt(file_to_use, self.q, delimiter=",")
         self.current_input = self.convert_input(M)
         s = self.numberize_state(self.current_input)
         a = self.choose_action(s)

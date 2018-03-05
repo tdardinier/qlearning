@@ -13,8 +13,8 @@ IA = [IA_random.IA(i) for i in range(nagents)]
 #IA[1] = IA_keyboard.IA(1)
 IA[0] = IA_rl.IA(0)
 
-n_candies = 5
-gridsize = 20
+n_candies = 20
+gridsize = 40
 
 step = 0
 
