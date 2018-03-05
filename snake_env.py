@@ -19,15 +19,17 @@ class Snake:
 
             self.update_count_max = 2
             self.update_count = 0
-            self.build_pos(pos, direction)
+            self.buildPos(pos, direction)
             self.new_pos = deque()
             self.prev_pos = deque()
 
             self.has_eaten = False
+            self.has_been_updated = False
+            
 
 
 
-        def build_pos(self, pos, direction):
+        def buildPos(self, pos, direction):
             self.pos = deque()
             x=pos[0]
             y=pos[1]
@@ -48,20 +50,10 @@ class Snake:
                 if self.direction == 3:
                     self.pos.append((x, y + i))
 
-
-        def _reset(self, pos, direction):
-            self.size = self.init_size
-
-            self.update_count = 0
-            self.direction = direction
-
-            self.build_pos(pos, direction)
-
         def update(self, move):
             self.prev_pos=self.pos.copy()
             move = Move(move)
-            print(move)
-            head = self.head()
+            head = self.getHead()
             self.new_pos.clear()
             for i in range(move.norm):
                 self.pos.pop()
@@ -80,28 +72,29 @@ class Snake:
             return pos in self.pos
         
         def inGrid(self, gridsize):
-            head = self.head()
+            head = self.getHead()
             if head[0]<0 or head[1]<0 or head[0] >= gridsize or head[1] >= gridsize:
                 return False
             return True
         
-        def inGridAfterMove(self, gridsize, move):
-            next_head = move.apply(self.head())
+        def inGridAfterMove(self, gridsize, move_type):
+            move=Move(move_type)
+            next_head = move.apply(self.getHead())
             if next_head[0]<0 or next_head[1]<0 or next_head[0] >= gridsize or next_head[1] >= gridsize:
                 return False
             return True
 
 
-        def head(self):
+        def getHead(self):
             return self.pos[0]
 
         def tail(self):
             return self.pos[-1]
 
         def next_pos(self, move):
-            return move.apply(self.head())
+            return move.apply(self.getHead())
 
-        def eat_candy(self, bonus):
+        def eatCandy(self, bonus):
             self.size += bonus
             tail_pos = self.tail()
             for i in range(bonus):
@@ -282,7 +275,8 @@ class Move:
 
 
     def apply(self, point):
-        return (point[0]+self.norm*self.direction[0], point[1]+self.norm*self.direction[1])
+        
+        return (point[0]+self.norm*self.dir[0], point[1]+self.norm*self.dir[1])
 
     def __str__(self):
         return 'Direction ' + str(self.dir) + ' with norm '  + str(self.norm)
@@ -407,7 +401,7 @@ class Map():
                     self.agents[i].has_eaten = True
                     toRemove.append(c)
                     rewards[s.id] = 1.0
-                    s.eat_candy(1)
+                    s.eatCandy(1)
             for c in toRemove:
                 self.candies.remove(c)
 
@@ -456,7 +450,7 @@ class Map():
             for c in self.candies:
                 if agent.onSnake(c):
                     removed_candies.append(c)
-                    agent.eat_candy(1)
+                    agent.eatCandy(1)
                     size_change+=1
             for c in removed_candies:
                 self.candies.remove(c)
@@ -478,7 +472,7 @@ class Map():
             agent.size -= size_change
             for i in range(size_change):
                 agent.pos.popleft()
-            agent.pos.appendleft(prev_tail)
+            agent.pos.append(prev_tail)
             
     def endturnOperations(self):
         killed=[]
@@ -532,24 +526,25 @@ class Map():
     def possibilities(self, agent_id):
         agent=self.agents[agent_id]
         moves = []
-        for move in self.MOVES:
-            if agent.inGridAfterMove(self.gridsize, move) and move.type != (agent.next_action+2)%4:
-                head_after_move = move.apply(agent.head())
+        for move_type in range(4):
+            if agent.inGridAfterMove(self.gridsize, move_type) and move_type != (agent.next_action+2)%4:
+                move = Move(move_type)
+                head_after_move = move.apply(agent.getHead())
                 legal_move=True
                 for s_id in self.activeAgents:
-                    if not s_id!=agent_id:
-                        if self.agents[s_id].updated and head_after_move in self.agents[s_id].pos:
+                    if not s_id==agent_id:
+                        if self.agents[s_id].has_been_updated and head_after_move in self.agents[s_id].pos:
                             legal_move = False
                             break
-                        if not self.agents[s_id].updated and head_after_move in self.agents[s_id].pos[:-1]:
-                            legal_move =False
+                        if not self.agents[s_id].has_been_updated and head_after_move in list(self.agents[s_id].pos)[:-1]:
+                            legal_move = False
                             break
                 if legal_move:
-                    moves.append(move)
+                    moves.append(move_type)
         return moves
     
     def evaluate(self, my_agent_id):
-        head = self.agents[my_agent_id]
+        head = self.agents[my_agent_id].getHead()
         mind = np.float('inf')
         for c in self.candies:
             mind=min(mind,abs(c[0]-head[0])+abs(c[1]-head[1]))
