@@ -1,5 +1,10 @@
+<<<<<<< HEAD
         
 def minimax(agent_id, my_agent_id, M, depth, h):
+=======
+
+def minimax(agent_id, my_agent_id, M, depth):
+>>>>>>> a3589ba4fc3efd8600a74f8a258ed6acd2225e76
     """
     The tree of possibilities is explored until the depth equals 0
     """
@@ -14,8 +19,7 @@ def minimax(agent_id, my_agent_id, M, depth, h):
         M.reverseLast()
     if depth==h:
         return M.evaluate(my_agent_id), -1
-    
-    
+
     if agent_id == my_agent_id:
         maxv=float('-inf')
         for move in M.actions(agent_id):
@@ -26,7 +30,7 @@ def minimax(agent_id, my_agent_id, M, depth, h):
                 maxarg=move
             M.reverseLast()
         return (maxv, maxarg)
-    
+
     else:
         minv=float('inf')
         minarg=-1
@@ -38,4 +42,7 @@ def minimax(agent_id, my_agent_id, M, depth, h):
                 minarg=move.type
             M.reverseLast()
         return (minv, minarg)
+<<<<<<< HEAD
                 
+=======
+>>>>>>> a3589ba4fc3efd8600a74f8a258ed6acd2225e76
