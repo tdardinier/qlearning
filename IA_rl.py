@@ -65,7 +65,7 @@ class IA():
 
     def convert_input(self, M):
 
-        head = M.agents[self.id].head()
+        head = M.agents[self.id].getHead()
 
         x = head[0]
         y = head[1]
