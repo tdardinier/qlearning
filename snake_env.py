@@ -4,6 +4,7 @@ import numpy as np
 from copy import deepcopy
 
 import pygame
+import time
 
 from collections import deque
 
@@ -21,6 +22,8 @@ class Snake:
             self.build_pos(pos, direction)
             self.new_pos = deque()
             self.prev_pos = deque()
+
+            self.has_eaten = False
 
 
 
@@ -141,69 +144,7 @@ class Render():
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-
-    def step(self):
-        new_obs = []
-        killed_on_step = [False] * len(self.agents)
-        rewards = [0.0] * self.num_agents
-
-#        for i in range(self.num_agents):
-#            print('snake number ' + str(i))
-#            print(self.agents[i])
-
-
-        for s in self.agents:
-            s.update()
-
-        for i, s in enumerate(self.agents):
-            # Did a snake eat an apple?
-            if not self.agents[i].alive: 
-                continue
-
-            toRemove = []
-            for c_i, c in enumerate(self.candies):
-                if s.onSnake(c):
-                    toRemove.append(c)
-                    rewards[i] = 1.0
-                    s.eat_candy(1)
-            for c in toRemove:
-                self.candies.remove(c)
-
-            # does snake hit a wall?
-            if not s.inGrid(self.grid_size):
-                killed_on_step[i] = True
-
-
-            # does snake collide with another agent?
-            for snake in self.agents:
-                if snake.alive:
-                    if s.alive and s.id != snake.id and s.interSnake(snake):
-                        print('kill ' +str(s.id) + ' ' + str(snake.id))
-                        killed_on_step[i]=True
-
-        for i, k in enumerate(killed_on_step):
-            if k:
-                self._add_candies(self.agents[i].prev_pos)
-                rewards[i] = -100.0
-                self.active_agents -= 1
-                self.agents[i].alive = False
-
-
-        done = False
-        if self.active_agents == 0:
-            done = True
-
-        self._check_ncandies()
-
-#        for i in range(self.num_agents):
-#            ob = self._generate_obs(i)
-#            new_obs.append(ob)
-
-        return deepcopy(new_obs), deepcopy(rewards), done, {}
-
-
     def render(self, mode='human'):
-        print('pygame_init ' + str(self._running))
         if self._pygame_init() == False:
             self._running = False
 
@@ -456,12 +397,14 @@ class Map():
 
         for i in self.activeAgents:
             self.agents[i].update(self.agents[i].next_action)
+            self.agents[i].has_eaten = False
 
         for i in self.activeAgents:
             s=self.agents[i]
             toRemove = []
             for c in self.candies:
                 if s.onSnake(c):
+                    self.agents[i].has_eaten = True
                     toRemove.append(c)
                     rewards[s.id] = 1.0
                     s.eat_candy(1)

@@ -10,7 +10,7 @@ MOVES = [
     (0, 1)
 ]
 
-vision_max = 5
+vision_max = 2
 n_sensors = 8 # We don't use the other snakes first
 n_actions = 4
 
@@ -125,7 +125,6 @@ class IA():
         return [x/s for x in p]
 
     def choose_action(self, s):
-        print(self.q)
         l = self.q[s]
         if use_epsilon_greedy:
             if rd.random() < epsilon:
@@ -153,7 +152,7 @@ class IA():
         self.prev_s = s
         return a
 
-    def dead():
+    def dead(self):
         self.q[self.prev_s][self.prev_a] = (1 - alpha) * self.q[self.prev_s][self.prev_a] + alpha * reward_dead
         return self.q
 
