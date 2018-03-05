@@ -57,6 +57,7 @@ class Snake:
         def update(self, move):
             self.prev_pos=self.pos.copy()
             move = Move(move)
+            print(move)
             head = self.head()
             self.new_pos.clear()
             for i in range(move.norm):
@@ -454,7 +455,7 @@ class Map():
 
 
         for i in self.activeAgents:
-            self.agents[i].update()
+            self.agents[i].update(self.agents[i].next_action)
 
         for i in self.activeAgents:
             s=self.agents[i]

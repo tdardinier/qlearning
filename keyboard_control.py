@@ -1,9 +1,11 @@
 import numpy as np
 from pygame.locals import *
 import pygame
+import random as rd
 
 from snake_env import Render, Map
 import time
+
 
 
 nagents = 3
@@ -25,6 +27,8 @@ while True:
             index = keys[49:58].index(1)
             if index > nagents:
                 index = 0
+        
+
 
         if (keys[K_RIGHT]):
             M.agents[index].nextAction(0)
@@ -46,7 +50,9 @@ while True:
     step+=1
 
     r, done = M.step()
+    
+    time.sleep(0.05)
 
 #    if done:
 #        e.reset()
-time.sleep(0.05)
+
