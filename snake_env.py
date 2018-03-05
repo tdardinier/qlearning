@@ -507,7 +507,7 @@ class Map():
             added_candies=agent.pos
             size_change = -agent.size
         else:
-            prev_tail=[agent.pos[-1]]
+            prev_tail=agent.pos[-1]
             agent.update(move)
             for c in self.candies:
                 if agent.onSnake(c):
@@ -517,7 +517,7 @@ class Map():
             for c in removed_candies:
                 self.candies.remove(c)
                 
-        self.previous_states.add((agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead))
+        self.previous_states.append((agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead))
         
     def revertLastUpdate(self):
         (agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead)=self.previous_states.pop()
@@ -534,7 +534,7 @@ class Map():
             agent.size -= size_change
             for i in range(size_change):
                 agent.pos.popleft()
-            agent.add(prev_tail)
+            agent.pos.appendleft(prev_tail)
             
     def endturnOperations(self):
         killed=[]
@@ -578,8 +578,6 @@ class Map():
     def finish(self):
         self.iters == self.max_iter
     
-    
-        
     def score(self, agent_id):
         if self.win(agent_id):
             return self.gridsize**2
@@ -591,7 +589,7 @@ class Map():
         agent=self.agents[agent_id]
         moves = []
         for move in self.MOVES:
-            if agent.inGridMove(self.gridsize, move) and move.type != (agent.next_action+2)%4:
+            if agent.inGridAfterMove(self.gridsize, move) and move.type != (agent.next_action+2)%4:
                 head_after_move = move.apply(agent.head())
                 legal_move=True
                 for s_id in self.activeAgents:
