@@ -8,14 +8,14 @@ import time
 
 class IA():
 
-    def __init__(self):
+    def __init__(self, agent_id):
         self.name = "IA_keyboard"
-        self.step = 0
+        self.id = agent_id
 
     def __str__(self):
         return self.name
 
-    def act(self, state, reward, dead):
+    def act(self, state, reward):
         while True:
             pygame.event.pump()
             keys = pygame.key.get_pressed()
