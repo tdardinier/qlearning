@@ -10,14 +10,16 @@ n_agents = 2
 n_candies = 10
 gridsize = 20
 
+
 file_to_use = "current_snake.csv"
-load_from_file = False
+load_from_file = True
+
+timestep = 0.1
 
 M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
 IA = [IA_rl.IA(i) for i in range(n_agents)]
 e = Render(M, spacing=20)
 q = None
-
 
 step_by_step = False
 
@@ -76,7 +78,8 @@ while True:
             np.savetxt(file_to_use, q, fmt='%.2f')
 
         r, done = M.step()
-        #time.sleep(0.001)
+        if not timestep is None:
+            time.sleep(timestep)
 
     M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
     e = Render(M, spacing=20)
