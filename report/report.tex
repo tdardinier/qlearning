@@ -52,21 +52,31 @@ The agent you designed for your environment. Justify your choice and design and 
 
 \section{Results and Discussion}
 
-This is one of the most important sections. You put your agent to the test in the environment, you show -- and most importantly -- you interpret the results.
+To measure how well the two agents perform in our environment, we use several measurements.
+We introduce the \emph{Random Agent}, which chooses at every step a random direction.
+We simulate the matches on a grid of size $30$, with $10$ candies on the map and the two adversarial agents we want to compare.
 
 \subsection{Performance of your Agent in your Environment}
 
-Show plots, graphs, tables (e.g., Table~\ref{a_table}), etc. You may wish to encourage readers to reproduce results for themselves, e.g., run \texttt{runDemo.py} in our source code. Show how your agent performs well, or, if it doesn't perform well, it is better to explain why (this is a result in itself!). In any case, you \emph{must} highlight the weaknesses of your agent as well as its strengths.
+\subsubsection{Performance of Learning}
+
+\begin{figure}[h]
+	\centering
+    \includegraphics[width=0.8\columnwidth]{images/learning_curve_against_random.pdf}
+    \caption{\label{learning_curve_against_random}The learning curve of the RL agent against a random one.}
+\end{figure}
+
+\subsubsection{Performance of the agents}
 
 \begin{table}[h]
-	\caption{\label{a_table}This table is just an example.}
+	\caption{\label{comparative_table}Results of the matches.}
 	\centering
-	\begin{tabular}{lll}
+	\begin{tabular}{llll}
 		\hline
-		\textbf{Environment config.} & \textbf{Standard SARSA} & \textbf{Our Improved Agent}  \\
+        \textbf{Match} & \textbf{Minimax} & \textbf{Random} \\
 		\hline
-		Simulation 1        & 10             & 15 \\
-		Simulation 2        & 12             & 11 \\
+        \textbf{RL} & 0 - 0 & 4744 - 113 \\
+        \textbf{Minimax} & 0 - 0 & - \\
 		\hline
 	\end{tabular}
 \end{table}
@@ -74,12 +84,6 @@ Show plots, graphs, tables (e.g., Table~\ref{a_table}), etc. You may wish to enc
 \subsection{Performance of your Agent in the ALife Environment}
 
 You deploy your agent in the ALife\footnote{\url{https://github.com/jmread/alife}} environment (a random screenshot shown in Figure~\ref{a_figure}). Does it work well? Why? Why not? Justify the adaptation you think is best.
-
-\begin{figure}[h]
-	\centering
-	\includegraphics[width=0.8\columnwidth]{alife.png}
-	\caption{\label{a_figure}An example figure}
-\end{figure}
 
 
 \section{Conclusion and Future Work}
