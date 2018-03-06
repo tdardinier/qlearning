@@ -160,8 +160,11 @@ class IA():
         print(spaces + l[3])
         print("")
 
-    def act(self, M, candy_found):
-        reward = reward_candy * candy_found
+    def candy_found(self, M):
+        return M.agents[self.id].has_eaten
+
+    def act(self, M):
+        reward = reward_candy * self.candy_found(M)
         s = self.numberize_state(self.convert_input(M))
         a = self.choose_action(s)
         if not (self.prev_s is None):

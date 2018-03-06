@@ -15,7 +15,7 @@ class IA():
     def __str__(self):
         return self.name
 
-    def act(self, state, reward):
+    def act(self, state):
         while True:
             pygame.event.pump()
             keys = pygame.key.get_pressed()
@@ -27,3 +27,6 @@ class IA():
                 return 2
             if (keys[K_DOWN]):
                 return 3
+
+    def dead(self):
+        return

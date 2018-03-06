@@ -10,5 +10,8 @@ class IA():
     def __str__(self):
         return self.name
 
-    def act(self, state, reward):
+    def act(self, state):
         return rd.randint(0, 3)
+
+    def dead(self):
+        return
