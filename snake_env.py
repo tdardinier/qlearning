@@ -436,29 +436,29 @@ class Map():
         agent.updated=True
         added_candies = []
         removed_candies = []
-        size_change=0
         dead=None
+        has_eaten=False
+        prev_tail=None
         if move==-1:
             dead=agent_id
             agent.alive=False
             self.addCandies(agent.pos)
             added_candies=agent.pos
-            size_change = -agent.size
         else:
             prev_tail=agent.pos[-1]
             agent.update(move)
             for c in self.candies:
                 if agent.onSnake(c):
+                    has_eaten=True
                     removed_candies.append(c)
                     agent.eatCandy(1)
-                    size_change+=1
             for c in removed_candies:
                 self.candies.remove(c)
                 
-        self.previous_states.append((agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead))
+        self.previous_states.append((agent_id, move, prev_tail, added_candies, removed_candies, has_eaten, dead))
         
     def revertLastUpdate(self):
-        (agent_id, move, prev_tail, added_candies, removed_candies, size_change, dead)=self.previous_states.pop()
+        (agent_id, move, prev_tail, added_candies, removed_candies, has_eaten, dead)=self.previous_states.pop()
         for c in added_candies:
             self.candies.remove(c)
         for c in removed_candies:
@@ -469,9 +469,9 @@ class Map():
             agent.alive=True
         else:
             agent.pos.popleft()
-            agent.size -= size_change
-            for i in range(size_change):
-                agent.pos.popleft()
+            if has_eaten:
+                agent.pos.pop()
+                agent.size -= 1
             agent.pos.append(prev_tail)
             
     def endturnOperations(self):
@@ -543,12 +543,12 @@ class Map():
                     moves.append(move_type)
         return moves
     
-    def evaluate(self, my_agent_id):
+    def evaluateDistClosestCandy(self, my_agent_id):
         head = self.agents[my_agent_id].getHead()
         mind = np.float('inf')
         for c in self.candies:
             mind=min(mind,abs(c[0]-head[0])+abs(c[1]-head[1]))
-        return mind
+        return mind/(2*self.gridsize-1)
                 
                 
     

@@ -10,11 +10,11 @@ def minimax(agent_id, my_agent_id, M, depth):
         if len(M.possibilities(my_agent_id))==0:
             return (-M.gridsize**2, -1)
         if depth==0:
-            return (M.evaluate(my_agent_id), -1)
+            return (M.agents[my_agent_id].size-M.evaluateDistClosestCandy(my_agent_id), -1)
         maxv=float('-inf')
-        for move in M.possibilities(agent_id):
+        for move in M.possibilities(my_agent_id):
             M.update(agent_id, move)
-            curr=minimax((agent_id+1)%M.nagents, my_agent_id, M, depth-1)
+            curr=minimax((my_agent_id+1)%M.nagents, my_agent_id, M, depth-1)
             if curr[0]>maxv:
                 maxv=curr[0]
                 maxarg=move
@@ -24,9 +24,9 @@ def minimax(agent_id, my_agent_id, M, depth):
         if len(M.possibilities(agent_id))==0:
             M.update(agent_id, -1)
             (value, move)=minimax((agent_id+1)%M.nagents, my_agent_id, M)
-            M.reverseLast()
+            M.revertLastUpdate()
         if depth==0:
-            return M.evaluate(my_agent_id), -1
+            return (M.agents[my_agent_id].size-M.evaluateDistClosestCandy(my_agent_id), -1)
         minv=float('inf')
         minarg=-1
         for move in M.possibilities(agent_id):
@@ -34,8 +34,8 @@ def minimax(agent_id, my_agent_id, M, depth):
             curr=minimax((agent_id+1)%M.nagents, my_agent_id, M, depth)
             if minv>curr[0]:
                 minv=curr[0]
-                minarg=move.type
-            M.reverseLast()
+                minarg=move
+            M.revertLastUpdate()
         return (minv, minarg)
             
             
