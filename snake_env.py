@@ -132,11 +132,6 @@ class Render():
         
         self.map = M
         
-
-    def seed(self, seed=None):
-        self.np_random, seed = seeding.np_random(seed)
-        return [seed]
-
     def render(self, mode='human'):
         if self._pygame_init() == False:
             self._running = False
@@ -153,9 +148,9 @@ class Render():
         
     def _draw_snake(self, snake):
         if snake.alive:
-            self._pygame_draw(self._display_surf, self._agent_surfs[-1], snake.pos[0])
             for i in range(1, (len(snake.pos))):
                 self._pygame_draw(self._display_surf, self._agent_surfs[snake.color_i], snake.pos[i])
+            self._pygame_draw(self._display_surf, self._agent_surfs[-1], snake.pos[0])
 
                 
     def _pygame_draw(self, surface, image, pos):
@@ -192,11 +187,6 @@ class Render():
         agent.color_i = i % len(self.AGENT_COLORS)
         agent.nextAction(direction)
 
-#        print('Snake ' + str(i))
-#        print(self.actions[i])
-
-    
-
     def _draw_env(self):
         self._display_surf.fill((0,0,0))
 
@@ -207,32 +197,6 @@ class Render():
         for i in range(0, self.window_dimension, self.spacing):
             self._display_surf.blit(self._wall_surf, (i, 0))
             self._display_surf.blit(self._wall_surf, (i, self.window_dimension - self.spacing))
-
-
-    def _generate_obs(self, agent):
-        obs = np.zeros((self.window_dimension, self.window_dimension))
-
-        if not self.agents[agent].alive:
-            return -1 * np.ones((self.window_dimension, self.window_dimension))
-
-        for i in range(self.agents[agent].size):
-
-            obs[self.agents[agent].pos[i]] = 1
-
-        for i, p in enumerate(self.agents):
-            if self.killed[i]: continue
-            for j in range(p.length):
-                obs[p.pos[j]] = 2
-        for i, f in enumerate(self.candies):
-            obs[f[0]][f[1]] = 3
-
-        obs[:][0] = -1
-        obs[:][self.window_dimension -1] = -1
-
-        obs[0][:] = -1
-        obs[self.window_dimension -1][:] = -1
-
-        return deepcopy(obs)
 
 
 
@@ -434,23 +398,25 @@ class Map():
     def update(self, agent_id, move):
         agent=self.agents[agent_id]
         agent.updated=True
-        added_candies = []
-        removed_candies = []
+        added_candies = set()
+        removed_candies = set()
         dead=None
         has_eaten=False
         prev_tail=None
-        if move==-1:
-            dead=agent_id
-            agent.alive=False
-            self.addCandies(agent.pos)
-            added_candies=agent.pos
+        if move==-1 and agent.alive:
+            if agent.alive:
+                dead=agent_id
+                agent.alive=False
+                self.addCandies(agent.pos)
+                for p in agent.pos:
+                    added_candies.add(p)
         else:
             prev_tail=agent.pos[-1]
             agent.update(move)
             for c in self.candies:
                 if agent.onSnake(c):
                     has_eaten=True
-                    removed_candies.append(c)
+                    removed_candies.add(c)
                     agent.eatCandy(1)
             for c in removed_candies:
                 self.candies.remove(c)
@@ -460,7 +426,11 @@ class Map():
     def revertLastUpdate(self):
         (agent_id, move, prev_tail, added_candies, removed_candies, has_eaten, dead)=self.previous_states.pop()
         for c in added_candies:
-            self.candies.remove(c)
+            try:
+                self.candies.remove(c)
+            except KeyError:
+                print('added candies ' +  str(added_candies))
+                print('candies ' + str(self.candies))
         for c in removed_candies:
             self.candies.add(c)
         agent=self.agents[agent_id]
@@ -526,6 +496,8 @@ class Map():
     def possibilities(self, agent_id):
         agent=self.agents[agent_id]
         moves = []
+        if not agent.alive:
+            return moves
         for move_type in range(4):
             if agent.inGridAfterMove(self.gridsize, move_type) and move_type != (agent.next_action+2)%4:
                 move = Move(move_type)
