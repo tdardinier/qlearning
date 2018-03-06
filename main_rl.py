@@ -6,9 +6,10 @@ from snake_env import Render, Map
 import time
 import IA_keyboard, IA_random, IA_rl
 
-n_agents = 10
-n_candies = 9
-gridsize = 50
+n_agents = 2
+n_candies = 10
+gridsize = 20
+
 
 file_to_use = "current_snake.csv"
 load_from_file = True

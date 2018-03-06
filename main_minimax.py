@@ -11,19 +11,19 @@ import IA_keyboard, IA_random, IA_rl
 
 nagents = 2
 IA = [IA_random.IA(i) for i in range(nagents)]
-n_candies = 50
+n_candies = 10
 
 step = 0
 
-M = Map(nagents=nagents, ncandies=n_candies, gridsize=40)
+M = Map(nagents=nagents, ncandies=n_candies, gridsize=30)
 e = Render(M, spacing=20)
 
 while True:
     e.render()
-    r=minimax(0,0,M,2)
+    r=minimax(0,0,M,4)
     M.agents[0].next_action=r[1]
     M.agents[1].next_action=IA[1].act(M,0)
     v=M.step()
-    time.sleep(0.05)
+    time.sleep(0.03)
     
 

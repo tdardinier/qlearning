@@ -13,6 +13,9 @@ max_iter_match = 1000
 
 q = np.loadtxt("current_snake.csv")
 
+adv_0 = IA_rl.IA(0, q)
+adv_1 = IA_random.IA(1)
+
 result_0 = 0
 result_1 = 0
 
@@ -21,8 +24,7 @@ for match in range(1, n_total_iter + 1):
     M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
     e = Render(M, spacing=20)
 
-    adv_0 = IA_rl.IA(0, q)
-    adv_1 = IA_random.IA(1)
+    adv_0 = IA_rl.IA(0, adv_0.q)
 
     for step in range(max_iter_match):
 
@@ -47,4 +49,3 @@ for match in range(1, n_total_iter + 1):
         result_0 += s0 / (s0 + s1)
         result_1 += s1 / (s0 + s1)
     print(result_0, result_1)
-

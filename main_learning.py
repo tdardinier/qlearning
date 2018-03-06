@@ -1,8 +1,9 @@
 import numpy as np
+from pygame.locals import *
 import pygame
 import random as rd
 from snake_env import Render, Map
-from IA import IA_rl, IA_random
+import IA_rl, IA_random
 
 n_agents = 2
 n_candies = 10
@@ -33,8 +34,8 @@ for match in range(1, n_total_iter + 1):
                 IA_learning.dead()
             break
 
-        M.agents[0].nextAction(IA_learning.act(M))
-        M.agents[1].nextAction(adversary.act(M))
+        M.agents[0].nextAction(IA_learning.act(M, M.agents[0].has_eaten))
+        M.agents[1].nextAction(adversary.act(M, M.agents[1].has_eaten))
 
         r, done = M.step()
 
