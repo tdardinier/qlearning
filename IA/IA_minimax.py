@@ -51,7 +51,7 @@ def minimax(agent_id, my_agent_id, M, depth):
 class IA():
 
     def __init__(self, agent_id):
-        self.name = "IA random"
+        self.name = "IA minimax"
         self.step = 0
         self.id = agent_id
         self.depth = depth
@@ -60,4 +60,4 @@ class IA():
         return self.name
 
     def act(self, state):
-        return minimax(self.id, self.id, state, self.depth)
+        return tree_strategy.minimax(self.id, self.id, state, self.depth)
