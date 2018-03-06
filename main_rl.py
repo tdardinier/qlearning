@@ -4,7 +4,7 @@ import pygame
 import random as rd
 from snake_env import Render, Map
 import time
-import IA_keyboard, IA_random, IA_rl
+from IA import IA_keyboard, IA_random, IA_rl
 
 n_agents = 2
 n_candies = 10
@@ -12,9 +12,9 @@ gridsize = 20
 
 
 file_to_use = "current_snake.csv"
-load_from_file = True
+load_from_file = False
 
-timestep = 0.1
+timestep = None
 
 M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
 IA = [IA_rl.IA(i) for i in range(n_agents)]
@@ -63,11 +63,7 @@ while True:
             break
 
         for i in range(n_agents):
-            candy_eaten = False
-            if M.agents[i].has_eaten:
-                candy_eaten = True
-            agent = IA[i]
-            a = agent.act(M, candy_eaten)
+            a = IA[i].act(M)
             M.agents[i].nextAction(a)
 
         keys = press()
