@@ -60,4 +60,4 @@ class IA():
         return self.name
 
     def act(self, state):
-        return tree_strategy.minimax(self.id, self.id, state, self.depth)
+        return minimax(self.id, self.id, state, self.depth)
