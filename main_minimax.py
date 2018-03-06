@@ -9,10 +9,8 @@ import time
 
 import IA_keyboard, IA_random, IA_rl
 
-nagents = 1
+nagents = 2
 IA = [IA_random.IA(i) for i in range(nagents)]
-#IA[1] = IA_keyboard.IA(1)
-IA[0] = IA_rl.IA(0)
 n_candies = 50
 
 step = 0
@@ -20,15 +18,12 @@ step = 0
 M = Map(nagents=nagents, ncandies=n_candies, gridsize=40)
 e = Render(M, spacing=20)
 
-for i in range(10):
+while True:
     e.render()
-    print(minimax(0,0, M, 2))
-    print(M.agents[0])
-    time.sleep(1)
-    e.render()
+    r=minimax(0,0,M,2)
+    M.agents[0].next_action=r[1]
+    M.agents[1].next_action=IA[1].act(M,0)
+    v=M.step()
+    time.sleep(0.05)
+    
 
-print(M.agents[0])
-M.update(0, 0)
-print(M.agents[0])
-M.revertLastUpdate()
-print(M.agents[0])
