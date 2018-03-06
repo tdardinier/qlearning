@@ -47,6 +47,8 @@ def minimax(agent_id, my_agent_id, M, depth):
                 minarg.append(move)
             M.revertLastUpdate()
         return (minv, random.choice(minarg))
+    
+    
 
 class IA():
 
@@ -60,4 +62,4 @@ class IA():
         return self.name
 
     def act(self, state):
-        return minimax(self.id, self.id, state, self.depth)
+        return minimax(self.id, self.id, state, self.depth)[1]
