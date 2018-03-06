@@ -3,7 +3,7 @@ from pygame.locals import *
 import pygame
 import random as rd
 from snake_env import Render, Map
-from IA import IA_rl, IA_random
+from IA import IA_rl, IA_random, IA_minimax
 
 n_agents = 2
 n_candies = 10
@@ -12,7 +12,8 @@ n_total_iter = 5000
 size_chunk = 100
 
 IA_learning = IA_rl.IA(0)
-adversary = IA_random.IA(1)
+#adversary = IA_random.IA(1)
+adversary = IA_minimax.IA(1)
 
 M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
 e = Render(M, spacing=20)
