@@ -51,6 +51,8 @@ class Snake:
                     self.pos.append((x, y + i))
 
         def update(self, move):
+            if move==-1:
+                return
             self.prev_pos=self.pos.copy()
             move = Move(move)
             head = self.getHead()
