@@ -2,28 +2,48 @@ import numpy as np
 from pygame.locals import *
 import pygame
 import random as rd
-from tree_strategy import minimax 
-
 from snake_env import Render, Map
-import time
+from IA import IA_rl, IA_random, IA_minimax
 
-import IA_keyboard, IA_random, IA_rl
-
-nagents = 2
-IA = [IA_random.IA(i) for i in range(nagents)]
+n_agents = 2
 n_candies = 10
+gridsize = 30
+n_total_iter = 5000
+size_chunk = 100
 
-step = 0
+IA_learning = IA_minimax.IA(0)
+adversary = IA_minimax.IA(1)
 
-M = Map(nagents=nagents, ncandies=n_candies, gridsize=30)
+M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
 e = Render(M, spacing=20)
 
-while True:
-    e.render()
-    r=minimax(0,0,M,4)
-    M.agents[0].next_action=r[1]
-    M.agents[1].next_action=IA[1].act(M,0)
-    v=M.step()
-    time.sleep(0.03)
-    
+result = []
+current_result = 0
 
+for match in range(1, n_total_iter + 1):
+
+    while True:
+
+        e.render()
+
+        if len(M.activeAgents) < n_agents:
+            if 0 in M.activeAgents:
+                current_result += 1
+            break
+        
+        
+        M.agents[0].nextAction(IA_learning.act(M))
+        M.agents[1].nextAction(adversary.act(M))
+
+        r, done = M.step()
+
+    if match % size_chunk == 0:
+        print(current_result)
+        result.append(current_result / size_chunk)
+        print(result)
+        current_result = 0
+
+    M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
+    e = Render(M, spacing=20)
+
+print(result)

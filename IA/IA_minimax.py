@@ -60,4 +60,4 @@ class IA():
         return self.name
 
     def act(self, state):
-        return minimax(self.id, self.id, state, self.depth)
+        return minimax(self.id, self.id, state, self.depth)[1]
