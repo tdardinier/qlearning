@@ -1,8 +1,24 @@
 from numpy import *
 import random as rd
-from pygame.locals import *
-import pygame
 import time
+
+use_vision_walls = True
+use_odorat_candies = True
+use_odorat_snakes = True
+
+vision_walls_max = 2
+odorat_candies_max = 8
+odorat_snakes_max = 3
+
+epsilon = 0.1
+tau = 0.1
+alpha = 0.2
+gamma = 0.9
+reward_dead = -10
+reward_candy = 1
+
+use_epsilon_greedy = False # Softmax otherwise
+use_sarsa = False # Q-Learning otherwise
 
 MOVES = [
     (1, 0),
@@ -11,46 +27,34 @@ MOVES = [
     (0, 1)
 ]
 
-vision_walls_max = 2
-odorat_candies_max = 15
-odorat_snake_max = 10
-
-sensors = [vision_walls_max for _ in range(4)] + [odorat_candies_max for _ in range(4)]
+sensors = [vision_walls_max for _ in range(4)] * use_vision_walls + [odorat_candies_max for _ in range(4)] * use_odorat_candies + [odorat_snakes_max for _ in range(4)] * use_odorat_snakes
 n_sensors = len(sensors)
 n_actions = 4
-
-file_to_use = "snake_15.csv"
-load_from_file = True
-
-epsilon = 0.1
-tau = 0.1
-alpha = 0.2
-gamma = 0.9
 actions = range(n_actions)
-n_states = (vision_walls_max ** 4) * (odorat_candies_max ** 4)
-reward_dead = -10
-
-use_epsilon_greedy = False # Softmax otherwise
-use_sarsa = False # Q-Learning otherwise
+n_states = (vision_walls_max ** (4 * use_vision_walls)) * (odorat_candies_max ** (4 * use_odorat_candies)) * (odorat_snakes_max ** (4 * use_odorat_snakes))
+delimiter = ","
 
 class IA():
 
     def __init__(self, agent_id, save = None):
 
-        self.prev_s = None
-        self.prev_a = 0
-        self.last_x = 0
-        self.last_y = 0
         self.id = agent_id
-        self.current_input = None
-        self.q = ones((n_states, n_actions)) * 0.5
-        if not (save is None):
-            self.q = save
-        elif load_from_file:
-            self.q = loadtxt(file_to_use, delimiter=",")
 
-    def __str__(self):
-        return ("Simple Qlearning agent: ", self.q)
+        self.prev_s = None
+        self.prev_a = None
+
+        if save is None:
+            self.q = zeros((n_states, n_actions))
+        else:
+            self.q = save
+
+    def load(self, fichier):
+        self.q = loadtxt(fichier, delimiter = delimiter)
+        self.prev_s = None
+        self.prev_a = None
+
+    def save(self, fichier):
+        savetxt(fichier, self.q, delimiter = delimiter)
 
     def numberize_state(self, s):
         r = 0
@@ -59,76 +63,71 @@ class IA():
             x = s[i]
             r += (x - 1) * m
             m *= sensors[i]
+            if (x <= 0 or x > sensors[i]):
+                print(i, x)
+                time.sleep(100)
+                raise Exception("Error: Bad sensor value")
         return r
 
     def distance_to_candy(self, x, y, M):
         d = odorat_candies_max
         for (a, b) in M.candies:
-            d = min(d, abs(x - a) + abs(y - b))
+            if a != x or b != y:
+                d = min(d, abs(x - a) + abs(y - b))
+        return d
+
+    def distance_to_snake(self, x, y, M):
+        d = odorat_snakes_max
+        for agent in M.agents:
+            if agent.id != self.id:
+                for (a, b) in agent.pos:
+                    if a != x or b != y:
+                        d = min(d, abs(x - a) + abs(y - b))
         return d
 
     def convert_input(self, M):
 
         head = M.agents[self.id].getHead()
-
         x = head[0]
         y = head[1]
+        values = []
 
-        self.last_x = x
-        self.last_y = y
-
-        walls = [vision_walls_max for _ in range(4)]
-        snakes = [odorat_snake_max for _ in range(4)]
-
-        odorat_candies = []
-        odorat_candies.append(self.distance_to_candy(x + 1, y, M))
-        odorat_candies.append(self.distance_to_candy(x, y - 1, M))
-        odorat_candies.append(self.distance_to_candy(x - 1, y, M))
-        odorat_candies.append(self.distance_to_candy(x, y + 1, M))
-
-        for i in range(len(MOVES)):
-            (xx, yy) = MOVES[i]
-
+        if use_vision_walls:
+            vision_walls = []
             # Walls
-            dist_wall = vision_walls_max
-            if xx == 1:
-                dist_wall = M.gridsize - x
-            elif xx == -1:
-                dist_wall = x + 1
-            elif yy == 1:
-                dist_wall = M.gridsize - y
-            elif yy == -1:
-                dist_wall = y + 1
-            else:
-                print("ERROR: shouldn't happen")
-            walls[i] = min(dist_wall, vision_walls_max)
+            for i in range(len(MOVES)):
+                (xx, yy) = MOVES[i]
+                dist_wall = vision_walls_max
+                if xx == 1:
+                    dist_wall = M.gridsize - x
+                elif xx == -1:
+                    dist_wall = x + 1
+                elif yy == 1:
+                    dist_wall = M.gridsize - y
+                elif yy == -1:
+                    dist_wall = y + 1
+                else:
+                    print("ERROR: shouldn't happen")
+                vision_walls.append(min(dist_wall, vision_walls_max))
+            values += vision_walls
 
-            # Snakes
-            # TODO
-            dist_snake = M.gridsize
-            for agent in M.agents:
-                for (a, b) in agent.pos:
-                    if xx == 1:
-                        if y == b and x < a:
-                            dist_snake = min(dist_snake, a - x)
-                    elif xx == -1:
-                        if y == b and x > a:
-                            dist_snake = min(dist_snake, x - a)
-                    elif yy == 1:
-                        if x == a and y < b:
-                            dist_snake = min(dist_snake, b - y)
-                    elif yy == -1:
-                        if x == a and y > b:
-                            dist_snake = min(dist_snake, y - b)
-                    else:
-                        print("ERROR: shouldn't happen")
-            snakes[i] = min(odorat_snake_max, dist_snake)
+        if use_odorat_candies:
+            odorat_candies = []
+            odorat_candies.append(self.distance_to_candy(x + 1, y, M))
+            odorat_candies.append(self.distance_to_candy(x, y - 1, M))
+            odorat_candies.append(self.distance_to_candy(x - 1, y, M))
+            odorat_candies.append(self.distance_to_candy(x, y + 1, M))
+            values += odorat_candies
 
-        #print("Walls", walls)
-        #print("Candies", candies)
-        #print("Snakes", snakes)
-        #return walls + candies + snakes
-        return walls + odorat_candies
+        if use_odorat_snakes:
+            odorat_snakes = []
+            odorat_snakes.append(self.distance_to_snake(x + 1, y, M))
+            odorat_snakes.append(self.distance_to_snake(x, y - 1, M))
+            odorat_snakes.append(self.distance_to_snake(x - 1, y, M))
+            odorat_snakes.append(self.distance_to_snake(x, y + 1, M))
+            values += odorat_snakes
+
+        return values
 
     def proba_softmax(self, l):
         p = [exp(q_value / tau) for q_value in l]
@@ -155,22 +154,15 @@ class IA():
         spaces = " " * 4
         l = ["%.2f" % x for x in self.q[s]]
         print("")
-        print((self.last_x, self.last_y))
-        print(self.current_input)
         print("Espace de choix")
         print(spaces + l[1])
         print(l[2] + spaces + l[0])
         print(spaces + l[3])
-        print(l)
         print("")
 
-    def act(self, M, reward):
-        pygame.event.pump()
-        keys = pygame.key.get_pressed()
-        if (keys[K_s]):
-            savetxt(file_to_use, self.q, delimiter=",")
-        self.current_input = self.convert_input(M)
-        s = self.numberize_state(self.current_input)
+    def act(self, M, candy_found):
+        reward = reward_candy * candy_found
+        s = self.numberize_state(self.convert_input(M))
         a = self.choose_action(s)
         if not (self.prev_s is None):
             if use_sarsa:
@@ -183,19 +175,3 @@ class IA():
 
     def dead(self):
         self.q[self.prev_s][self.prev_a] = (1 - alpha) * self.q[self.prev_s][self.prev_a] + alpha * reward_dead
-        return self.q
-
-#    def act(self, state, reward, dead):
-#        self.convert_input(state)
-#        while True:
-#            pygame.event.pump()
-#            keys = pygame.key.get_pressed()
-#            if (keys[K_RIGHT]):
-#                return 0
-#            if (keys[K_UP]):
-#                return 1
-#            if (keys[K_LEFT]):
-#                return 2
-#            if (keys[K_DOWN]):
-#                return 3
-        #return rd.randint(0, 3)
