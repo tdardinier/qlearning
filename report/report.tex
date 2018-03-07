@@ -35,22 +35,42 @@ Do not change the formatting (columns, margins, etc). Hint: shared tools like \t
 
 \section{Background and Related Work}
 
+\subsection{Reinforcement Learning}
+
+
+\subsubsection{Learning}
+
+\textbf{Q-learning algorithm}
 \cite{lecture-rl}
 \cite{lecture-rl2}
-
-Q-learning:
+\cite{intro-rl}
 \cite{qlearning}
 \[
 	Q^{t+1}(s_t, a_t) = (1-\alpha) Q^t(s_t, a_t) + \alpha (r_t + \gamma \max\limits_b Q^t(s_{t+1}, b))
 \]
 
-
-SARSA:
+\textbf{SARSA algorithm}
+\cite{lecture-rl}
+\cite{lecture-rl2}
+\cite{intro-rl}
 \cite{sarsa}
 \[
 	Q^{t+1}(s_t, a_t) = (1-\alpha) Q^t(s_t, a_t) + \alpha (r_t + \gamma Q^t(s_{t+1}, a_{t+1}))
 \]
 
+\subsubsection{Exploitation vs. Exploration}
+
+\textbf{$\epsilon$-greedy exploration}
+\cite{lecture-rl}
+\cite{lecture-rl2}
+\cite{intro-rl}
+With probability $\epsilon$, the agent chooses a random action to explore and learn the consequences.
+
+\textbf{Selection with softmax operator}
+\cite{intro-rl}
+\[
+    P\left(a_t = a\right) = \frac{\exp\left(Q^t(s_t, a) / \tau\right)}{\sum\limits_b \exp\left(Q^t(s_t, b)\right) / \tau}
+\]
 
 
 Elaborate (in your own words) the background material required to understand your work. It should cover a subset of the topics touched upon in the course. You are encouraged to cite topics in lectures, e.g., structured output prediction in , book chapters, e.g., Chapter 9 from , or articles from the literature, e.g., . Basically, you should prepare the reader to understand what you are about to present in the following sections. Eq.~\eqref{eq:MAP} shows a random equation.
@@ -125,7 +145,7 @@ We simulate the games on a grid of size $30$, with $10$ candies on the map and t
 
 \begin{figure}[h]
 	\centering
-    \includegraphics[width=0.8\columnwidth]{images/learning_curve_against_random.pdf}
+    \includegraphics[width=0.95\columnwidth]{images/learning_curve_against_random.pdf}
     \caption{\label{learning_curve_against_random}The learning curve of the RL agent against a random one.}
 \end{figure}
 
@@ -154,11 +174,19 @@ This hypothesis is clearly false for the \emph{Random} agent.
 		\hline
         \textbf{Game} & \textbf{Random} & \textbf{Minimax}  \\
 		\hline
-        \textbf{RL} & 991 - 4 & X - X \\
+        \textbf{RL} & 991 - 4 & 0 - 174 \\
         \textbf{Minimax} & 933 - 0 &  \\
 		\hline
 	\end{tabular}
 \end{table}
+
+\begin{figure}[h]
+	\centering
+    \includegraphics[width=0.95\columnwidth]{images/histo_size.pdf}
+    \caption{\label{histo_size}Distribution of the proportion of the size of the \emph{RL} agent for the $776$ games ended after $1000$ iterations.}
+\end{figure}
+
+
 
 \subsection{Performance of your Agent in the ALife Environment}
 
@@ -193,7 +221,9 @@ Unfortunately, this timeframe doesn't seem sufficient enough for the insects to 
 
 	\bibitem{sarsa}
 	A. Rummery, G \& Niranjan, Mahesan. (1994). On-Line Q-Learning Using Connectionist Systems. Technical Report CUED/F-INFENG/TR 166. 
-	
+
+    \bibitem{intro-rl}
+    Sutton, R. S. \& Barto, A. G. 1998 Reinforcement learning: an introduction. Cambridge, MA: MIT Press.
 
 \end{thebibliography}
 
