@@ -48,12 +48,56 @@ Describe your environment, either one you adapted/borrowed from somewhere, or de
 
 \section{The Agent}
 
-The agent you designed for your environment. Justify your choice and design and explain briefly how you implemented/configured it. Naturally, if you took a ready-made environment, you should invert relatively much more effort into this section than the previous one.
+We designed two different agents for this environment to compare different strategies.
+The \emph{Reinforcement Learning} (\emph{RL}) agent is model-free, whereas the \emph{Minimax} agent is based on the exploration of the different possibilities.
+
+\subsection{The Reinforcement Learning Agent}
+
+% TODO: cite papers
+This model-free agent uses either SARSA or Q-Learning to learn the model and the consequences of its actions.
+It also uses either $\epsilon$-greedy exploration or the Softmax method to tackle the dilemma between exploitation and exploration.
+
+To perceive its environment without having too many states to learn, we use $12$ inputs.
+\begin{enumerate}
+    \item $0$ if the head of the snake touches the right wall, $1$ otherwise.
+    \item $0$ if the head of the snake touches the upper wall, $1$ otherwise.
+    \item $0$ if the head of the snake touches the left wall, $1$ otherwise.
+    \item $0$ if the head of the snake touches the lower wall, $1$ otherwise.
+    \item The distance between the square located to the right of the head and the closest candy (if greater than $7$, this input is $7$).
+    \item The distance between the square located to the top of the head and the closest candy (if greater than $7$, this input is $7$).
+    \item The distance between the square located to the left of the head and the closest candy (if greater than $7$, this input is $7$).
+    \item The distance between the square located to the bottom of the head and the closest candy (if greater than $7$, this input is $7$).
+    \item The distance between the square located to the right of the head and the closest square of another snake (if greater than $3$, this input is $3$).
+    \item The distance between the square located to the top of the head and the closest square of another snake (if greater than $3$, this input is $3$).
+    \item The distance between the square located to the left of the head and the closest square of another snake (if greater than $3$, this input is $3$).
+    \item The distance between the square located to the bottom of the head and the closest square of another snake (if greater than $3$, this input is $3$).
+\end{enumerate}
+These inputs allows the snake to have a local vision of the candies, a local but smaller vision of the other snakes, and feel when it touches a wall.
+
+We also give rewards after each action done by the snake.
+\begin{itemize}
+    \item $1$ if the snake ate a candy.
+    \item $-10$ if the snake died.
+    \item $0$ otherwise.
+\end{itemize}
+
+The agent will easily learn to look for candies and to avoid walls.
+It will also learn to avoid other snakes.
+
+Finally, we use the following parameters:
+\begin{itemize}
+    \item $\epsilon = 0.1$ in the case of $\epsilon$-greedy exploration.
+    \item $\tau = 0.1$ in the case of Softmax exploration.
+    \item $\alpha = 0.2$. A learning rate so high is strong enough because the inputs and the best actions to take are highly correlated.
+    \item $\gamma = 0.9$. We don't use $1$ to make it clear that the best path is always the shortest, but it is near $1$ since we care about the future almost as much as the present.
+\end{itemize}
+
+\subsection{The Minimax Agent}
 
 \section{Results and Discussion}
 
 To measure how well the two agents perform in our environment, we use several measurements.
-We introduce the \emph{Random Agent}, which chooses at every step a random direction.
+We introduce the \emph{Random} agent, which chooses at every step a random direction.
 We simulate the matches on a grid of size $30$, with $10$ candies on the map and the two adversarial agents we want to compare.
 
 \subsection{Performance of your Agent in your Environment}
@@ -65,6 +109,12 @@ We simulate the matches on a grid of size $30$, with $10$ candies on the map and
     \includegraphics[width=0.8\columnwidth]{images/learning_curve_against_random.pdf}
     \caption{\label{learning_curve_against_random}The learning curve of the RL agent against a random one.}
 \end{figure}
+
+To analyze the learning time of the \emph{RL} agent, we simulate it against the \emph{Random} agent.
+At the beginning, the \emph{RL} agent knows nothing.
+We run $5000$ matches, and we compute the frequency of victories for the \emph{RL} agent for every chunk of $100$ matches.
+The results are presented on Figure~\ref{learning_curve_against_random}.
+As we can see, with only a few hundreds matches, this agent is far better than the \emph{Random} one.
 
 \subsubsection{Performance of the agents}
 
@@ -83,8 +133,18 @@ We simulate the matches on a grid of size $30$, with $10$ candies on the map and
 
 \subsection{Performance of your Agent in the ALife Environment}
 
-You deploy your agent in the ALife\footnote{\url{https://github.com/jmread/alife}} environment (a random screenshot shown in Figure~\ref{a_figure}). Does it work well? Why? Why not? Justify the adaptation you think is best.
+We only tried to deploy our \emph{RL} agent in the ALife Environment since it is model-free.
+Deploying the \emph{Minimax} agent would have require to create a totally new model, which would have made it a different agent.
+When using the same technics (Q-Learning or SARSA, $\epsilon$-greedy or Softmax exploration), the results aren't as satisfactory as in the Snake world.
+This environment is much more complicated, and the inputs and outputs are analogous.
 
+We chose to tackle these issues by discretizing the inputs.
+We don't use the energy input.
+We multiply each other input (the color sensors) by $5$, and round them to the lower integer.
+To keep the number of actions small, we only allow rotations of $-\frac{\pi}{2}$, $0$, $\frac{\pi}{2}$ and $pi$.
+
+After a few minutes of simulation, it seems that the herbivore have understood that they have to eat the plants.
+Unfortunately, this timeframe doesn't seem sufficient enough for the insects to learn other lessons.
 
 \section{Conclusion and Future Work}
 	This section summarizes the paper: Your environment and agent, its strength and its weaknesses. Also remark about what would be the next steps you would take if you or someone else were to continue/extend this project. 
