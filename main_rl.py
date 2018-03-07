@@ -17,7 +17,7 @@ load_from_file = False
 timestep = None
 
 last_saved = time.time()
-timestep_to_save = 180
+timestep_to_save = 1800
 
 M = Map(nagents=n_agents, ncandies=n_candies, gridsize=gridsize)
 IA = [IA_rl.IA(i) for i in range(n_agents)]
