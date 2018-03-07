@@ -70,20 +70,18 @@ class IA():
         return r
 
     def distance_to_candy(self, x, y, M):
-        d = odorat_candies_max
+        d = odorat_candies_max - 1
         for (a, b) in M.candies:
-            if a != x or b != y:
-                d = min(d, abs(x - a) + abs(y - b))
-        return d
+            d = min(d, abs(x - a) + abs(y - b))
+        return d + 1
 
     def distance_to_snake(self, x, y, M):
-        d = odorat_snakes_max
+        d = odorat_snakes_max - 1
         for agent in M.agents:
             if agent.id != self.id:
                 for (a, b) in agent.pos:
-                    if a != x or b != y:
-                        d = min(d, abs(x - a) + abs(y - b))
-        return d
+                    d = min(d, abs(x - a) + abs(y - b))
+        return d + 1
 
     def convert_input(self, M):
 
