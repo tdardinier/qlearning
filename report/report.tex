@@ -89,7 +89,7 @@ Describe your environment, either one you adapted/borrowed from somewhere, or de
 We designed two different agents for this environment to compare different strategies.
 The \emph{Reinforcement Learning} (\emph{RL}) agent is model-free, whereas the \emph{Minimax} agent is based on the exploration of the different possibilities.
 
-\subsection{The Reinforcement Learning Agent}
+\subsection{The Reinforcement Learning Agent\label{rl_agent}}
 
 % TODO: cite papers
 This model-free agent uses either SARSA or Q-Learning to learn the model and the consequences of its actions.
@@ -186,7 +186,13 @@ This hypothesis is clearly false for the \emph{Random} agent.
     \caption{\label{histo_size}Distribution of the proportion of the size of the \emph{RL} agent for the $776$ games ended after $1000$ iterations.}
 \end{figure}
 
-
+The game between the \emph{RL} and \emph{Minimax} agents ends before $1000$ iterations $174$ times out of $1000$.
+For $50$ of theses games, it ends in a tie, where both agents are killed at the same iteration.
+The other $776$ games are interesting to look at.
+When a game reaches the maximum number of iterations, we stop it, and measure the sizes of the two agents.
+The distribution of the proportion of the size of the \emph{RL} agent compared to the sum of both sizes is presented on Figure~\ref{histo_size}.
+The main difference between the \emph{RL} agent and the \emph{Minimax} one is the local vision of the former, which can only ``see'' candies and snakes up to a Manhattan distance of $8$ and $4$ squares.
+The average propotion size of $25$ \% for the \emph{RL} agent is thus really strong.
 
 \subsection{Performance of your Agent in the ALife Environment}
 
@@ -204,10 +210,16 @@ After a few minutes of simulation, it seems that the herbivore have understood t
 Unfortunately, this timeframe doesn't seem sufficient enough for the insects to learn other lessons.
 
 \section{Conclusion and Future Work}
-	This section summarizes the paper: Your environment and agent, its strength and its weaknesses. Also remark about what would be the next steps you would take if you or someone else were to continue/extend this project. 
-	Note that for the initial submission you are limited strictly to 4 pages (double column), \emph{not including references}. An extra page will be allowed for final submission (after the initial reviews). 
+    This environment is interesting to use for multiple agents, because it has a few aspects.
+    A snake has to eat candies to grow, but in the same time it also has to avoid collisions with walls and other snakes.
+    The inputs defined in Subsection~\cite{rl_agent} allows an agent to have a local but precise vision of its environment.
+    Such an agent learns quickly and is able to outperform a \emph{Random} agent after a few hundreds games.
+    When competing against a strong AI, the \emph{Minimax} agent, whose only limitation is the depth it can explore when deciding which action to take, its results are quite satisfactory.
 
-% The bibliography:
+    The main issue with the strategy we chose is the high number of states.
+    For instance, the agent has to learn many times that going into a wall is bad, because there are a lot of different states where it is touching a wall.
+    To continue this work, one should focus on Deep Reinforcement Learning, to give the snake a bigger vision of its environment, and make it easier and quicker for it to learn the best strategy.
+
 \begin{thebibliography}{4}
 
 	\bibitem{lecture-rl} % Web document
