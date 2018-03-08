@@ -3,7 +3,9 @@
 \usepackage{graphicx}   
 %\usepackage{subfigure}
 \usepackage{url}        
-\usepackage{amsmath}    
+\usepackage{amsmath}  
+\usepackage{hyperref}
+  
 % Some useful/example abbreviations for writing math
 \newcommand{\argmax}{\operatornamewithlimits{argmax}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
@@ -14,18 +16,22 @@
 \begin{document}
 
 % Define document title, do NOT write author names
-\title{The Title of your Report}
+\title{An artificial intelligence in a multiplayer snake game}
 \author{Anonymous Authors}
 \maketitle
 
 % Write abstract here
 \begin{abstract}
-	A short summary of your project. You should change also the title, but do \emph{not} enter any author names or anything that unnecessarily identifies any of the authors. It is suggested you use a similar structure (sections, etc.) as demonstrated in this document, but you can make the section headings more descriptive if you wish. Of course \emph{you should delete all the text in this template and write your own}! -- this text simply provides detailed instructions/hints on how to proceed.
+Snake is a very common video game with many variations. First it has been popularized as a singleplayer game on game consoles, and more, on Nokia mobile phones. More recently it has regained attention with the release of \emph{slither.io}, a multiplayer browser game, largely inspired by the original snake game. Each player controls a snake and aims to grow in size by consuming candies. Different types of strategies can be used to this end. The objective of this project is to design an artificial intelligence in an environment which reproduces the main characteristics of \emph{slither.io}.
 
 \end{abstract}
 
 % Each section begins with a \section{title} command
 \section{Introduction}
+In this project we design an environment which looks like \emph{slither.io}, while simplyfing some features to ease the training and the design of agents. 
+
+Regarding the environment a graphical interface is available, we reuse the interface of the project 
+\footnote{http//github.com/bhairavmehta95/slitherin-gym}. We completely rebuild the backend to make it more efficient. Then we design two types of artificial intelligence. One is based on tree search methods. The other one consists in reinforcement learning algorithm.
 
 Describe what you did. Provide access to your anonymized code\footnote{Our code is available here: \url{http://anonymouslinktoyourcode.zip}}.
 
