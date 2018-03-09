@@ -22,7 +22,7 @@
 
 % Write abstract here
 \begin{abstract}
-Snake is a very common video game with many variations. First it has been popularized as a singleplayer game on Nokia mobile phones. More recently it has regained attention with the release of \emph{slither.io}, a multiplayer browser game largely inspired by the original snake game. Each player controls a snake and aims to grow in size by consuming candies. Different types of strategies can be used to this end. The objective of this project is to design an artificial intelligence in an environment which reproduces the main characteristics of \emph{slither.io}.
+Snake is a very famous video game with many variations. It has been popularized at first as a singleplayer game on Nokia mobile phones. More recently it has regained attention with the release of \emph{slither.io}, a multiplayer browser game largely inspired by the original snake game. Each player controls a snake and aims to grow in size by consuming candies. Different types of strategies can be used to this end. The objective of this project is to design an artificial intelligence in an environment which reproduces the main characteristics of \emph{slither.io}.
 
 \end{abstract}
 
@@ -30,20 +30,27 @@ Snake is a very common video game with many variations. First it has been popula
 \section{Introduction}
 The browser game \emph{slither.io} allows various types of strategies while having few parameters. Due to this wide range of strategies this game attracts the attention of the artificial intelligence community. Recently in its \emph{Requests for Research 2.0}, \emph{OpenAI} released a list of seven unsolved problems, including the design of an artificial intelligence for a clone of \emph{slither.io}.
 
-In this project we design an environment which looks like \emph{slither.io}, while simplyfing some features to ease the training and the design of agents. 
+In this project\footnote{Our code: \url{https://filetea.me/\#n3wMaCOW44UTG6SEGPxkr9Enw}}
+we design an environment which looks like \emph{slither.io}, while simplyfing some features to ease the training and the design of agents. 
 
 Regarding the environment a graphical interface is available. We reuse the interface of the project 
-\footnote{http//github.com/bhairavmehta95/slitherin-gym}. However we completely rebuild the backend to make it more efficient. 
+\footnote{\url{http://github.com/bhairavmehta95/slitherin-gym}}. However we completely rebuild the backend to make it more efficient. 
 
-Then we design two types of artificial intelligence. On is based on reinforcement learning. The other one consists in tree search methods. Our cods is available here \footnote{Our code is available here: \url{http://anonymouslinktoyourcode.zip}}.
+Then we design two types of artificial intelligence. On is based on reinforcement learning. The other one consists in tree search methods.
 \section{Background and Related Work}
 
 \subsection{Reinforcement Learning}
 
+To design our model-free agent based on reinforcement learning, we explored two options to learn and two options to tackle the dilemma between exploitation and exploration.
 
 \subsubsection{Learning}
 
+To learn, we implemented two similar algorithms, Q-learning and SARSA.
+Both are based on a Q-table, which is indexed by states and actions. If $s$ is a state and $a$ an action, $Q[s][a]$ is aimed to be the reward the agent can expect when it is in state $s$ and does action $a$.
+The difference between both algorithms is how the Q-table is learnt.
+
 \textbf{Q-learning algorithm}
+In the Q-learning algorithm, the agent learns the value of an action by assuming that it chooses then the best actions, hence the following equation.
 \cite{lecture-rl}
 \cite{lecture-rl2}
 \cite{intro-rl}
@@ -53,6 +60,7 @@ Then we design two types of artificial intelligence. On is based on reinforcemen
 \]
 
 \textbf{SARSA algorithm}
+On the other hand, to estimate the value of an action in a given state, the SARSA algorithm uses the real action which is chosen thereafter.
 \cite{lecture-rl}
 \cite{lecture-rl2}
 \cite{intro-rl}
@@ -63,17 +71,31 @@ Then we design two types of artificial intelligence. On is based on reinforcemen
 
 \subsubsection{Exploitation vs. Exploration}
 
+As always in a context of reinforcement learning, the agents faces the dilemma between exploitation and exploration.
+If we favor too much the exploitation, then the agent won't learn.
+On the other hand, if we favor too much the exploration, the agent will learn a lot, but it won't exhibit a smart behaviour, and will explore a lot of ``bad'' possibilities, which we don't care about.
+We tried two different approaches to tackle this issue.
+
 \textbf{$\epsilon$-greedy exploration}
+The $\epsilon$-greedy exploration approach is one of the simplest approaches one can think of.
+At each iteration, the agent chooses a random action to explore with probability $\epsilon$, and chooses the best action given its current knowledge with probability $1-\epsilon$.
 \cite{lecture-rl}
 \cite{lecture-rl2}
 \cite{intro-rl}
-With probability $\epsilon$, the agent chooses a random action to explore and learn the consequences.
 
 \textbf{Selection with softmax operator}
+The softmax operator sees the dilemma in a new light.
+Instead of choosing a totally random action with small probability, given that some options are really bad (such as going straight into a wall), it chooses at random an action.
+The greater expected outcome of the action (given by the current Q-table), the more probable it is to choose the action.
+
+This approach requires a parameter $\tau$, often called the ``temperature'', which acts as a normalizing factor, and gives a preference for either randomness or efficiency.
+If $\tau \to \infty$, then the agent acts almost totally randomly.
+If $\tau \to 0$, then the agent almost always chooses the best action.
 \cite{intro-rl}
 \[
     P\left(a_t = a\right) = \frac{\exp\left(Q^t(s_t, a) / \tau\right)}{\sum\limits_b \exp\left(Q^t(s_t, b)\right) / \tau}
 \]
+
 
 \subsection{Search Algorithms}
 This part is based on methods presented during the third lecture of the course \cite{lecture_minimax}. The idea is to explore the possible future states of the game to make the best decision. We assume that the opponent is a rationnal agent, and has the same evaluation function than those use for our agent. Therefore he will make the best possible choice for its next move from the point of view of our agent. When it is the turn of our agent he makes the move that maximizes the evaluation function, given the previous moves of its opponent.
@@ -143,15 +165,14 @@ First multiple cost functions could be used. We choose a cost function which max
 
 Moreover this strategy is computational intensive, to be really efficient it needs to explore as much states as possible. We plan to implement an alpha-beta prunning to avoid this lack. 
 
-
-
 \section{Results and Discussion}
 
 To measure how well the two agents perform in our environment, we use several measurements.
 We introduce the \emph{Random} agent, which chooses at every step a random direction.
 We simulate the games on a grid of size $30$, with $10$ candies on the map and the two adversarial agents we want to compare.
+The \emph{RL} agent is used in the setting of the softmax exploration and the Q-learning algorithm.
 
-\subsection{Performance of your Agent in your Environment}
+\subsection{Performance of our Agent in our Environment}
 
 \subsubsection{Performance of Learning}
 
@@ -206,7 +227,7 @@ The distribution of the proportion of the size of the \emph{RL} agent compared t
 The main difference between the \emph{RL} agent and the \emph{Minimax} one is the local vision of the former, which can only ``see'' candies and snakes up to a Manhattan distance of $8$ and $4$ squares.
 The average propotion size of $25$ \% for the \emph{RL} agent is thus really strong.
 
-\subsection{Performance of your Agent in the ALife Environment}
+\subsection{Performance of our Agent in the ALife Environment}
 
 We only tried to deploy our \emph{RL} agent in the ALife Environment since it is model-free.
 Deploying the \emph{Minimax} agent would have require to create a totally new model, which would have made it a different agent.
