@@ -6,7 +6,7 @@ from snake_env import Render, Map
 from IA import IA_rl, IA_random, IA_minimax
 
 n_agents = 2
-n_candies = 10
+n_candies = 30
 gridsize = 30
 n_total_iter = 1000
 max_iter_match = 1000
