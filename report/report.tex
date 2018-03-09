@@ -76,12 +76,6 @@ With probability $\epsilon$, the agent chooses a random action to explore and le
 \]
 
 
-Elaborate (in your own words) the background material required to understand your work. It should cover a subset of the topics touched upon in the course. You are encouraged to cite topics in lectures, e.g., structured output prediction in , book chapters, e.g., Chapter 9 from , or articles from the literature, e.g., . Basically, you should prepare the reader to understand what you are about to present in the following sections. Eq.~\eqref{eq:MAP} shows a random equation.
-\begin{equation}
-	\label{eq:MAP}
-	% Note the example \newcommand s defined above which make it faster to write latex math
-	\ypred = \argmax_{\y \in \{0,1\}} p(\y|\x)
-\end{equation}
 
 \section{The Environment}
 We designed a simplified \emph{slither.io} environment while trying to keep the main characteristics of this environment. Several snakes move on a 2D grid. They grow each time they eat a candy, these candies randomly appear on the grid. When the head of a snake collides with a border or another snake, it dies and is tranformed into candies. The snakes aims at maximizing their score at the end of the party, which is equal to their relative size to the total size of all snakes alive.
@@ -138,6 +132,10 @@ Finally, we use the following parameters:
 \end{itemize}
 
 \subsection{The Minimax Agent}
+Minimax is a decision rule where the agent takes a decision assuming that the other snakes take the best decision. It consists in the exhaustive exploration of the tree of possible actions until a certain depth is reached. Then the quality of the current state is evaluated by a cost function. 
+
+First multiple cost functions could be used. We choose a cost function which maximises the size of the snake while minimizing the distance to the closest candy. Given a grid of size $g$, a snake $a$ of length $l$, and the fact that the closest candy to the snake is at distance $d$, the evaluation of the current state equals $l+\tfrac{d}{2g-1}$. This type of cost function seems to be reasonable since the primary goal of the snake is to eat candies. However it prevents the apparition of more complex strategies since basically the snake just goes to the closest candy. Moreover this strategy is computational intensive, to be really efficient it needs to explore as much states as possible. We plan to implement an alpha-beta prunning to avoid this lack. Moreover the snake pessimistically assumes that its opponent always take the best decision. Therefore it might be overly cautious.
+
 
 \section{Results and Discussion}
 
