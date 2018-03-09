@@ -1,9 +1,16 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
 \BOOKMARK [1][-]{section.2}{Background and Related Work}{}% 2
-\BOOKMARK [1][-]{section.3}{The Environment}{}% 3
-\BOOKMARK [1][-]{section.4}{The Agent}{}% 4
-\BOOKMARK [1][-]{section.5}{Results and Discussion}{}% 5
-\BOOKMARK [2][-]{subsection.5.1}{Performance of your Agent in your Environment}{section.5}% 6
-\BOOKMARK [2][-]{subsection.5.2}{Performance of your Agent in the ALife Environment}{section.5}% 7
-\BOOKMARK [1][-]{section.6}{Conclusion and Future Work}{}% 8
-\BOOKMARK [1][-]{section*.1}{References}{}% 9
+\BOOKMARK [2][-]{subsection.2.1}{Reinforcement Learning}{section.2}% 3
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Learning}{subsection.2.1}% 4
+\BOOKMARK [3][-]{subsubsection.2.1.2}{Exploitation vs. Exploration}{subsection.2.1}% 5
+\BOOKMARK [1][-]{section.3}{The Environment}{}% 6
+\BOOKMARK [1][-]{section.4}{The Agent}{}% 7
+\BOOKMARK [2][-]{subsection.4.1}{The Reinforcement Learning Agent}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.2}{The Minimax Agent}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Results and Discussion}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{Performance of your Agent in your Environment}{section.5}% 11
+\BOOKMARK [3][-]{figure.1}{Performance of Learning}{subsection.5.1}% 12
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Performance of the agents}{subsection.5.1}% 13
+\BOOKMARK [2][-]{subsection.5.2}{Performance of your Agent in the ALife Environment}{section.5}% 14
+\BOOKMARK [1][-]{section.6}{Conclusion and Future Work}{}% 15
+\BOOKMARK [1][-]{section*.1}{References}{}% 16

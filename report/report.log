@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6200 64-bit) (preloaded format=pdflatex 2018.1.14)  7 MAR 2018 01:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6200 64-bit) (preloaded format=pdflatex 2018.1.14)  9 MAR 2018 02:00
 entering extended mode
 **./report.tex
 (report.tex
@@ -354,74 +354,73 @@ LaTeX Info: Redefining \nameref on input line 16.
 \@outlinefile=\write3
 \openout3 = `report.out'.
 
-LaTeX Font Info:    Try loading font information for OT1+pcr on input line 40.
-
-("C:\Program Files\MiKTeX 2.9\tex\latex\psnfss\ot1pcr.fd"
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-Underfull \hbox (badness 10000) in paragraph at lines 40--40
-[][][][][]$\OT1/ptm/m/n/8 https : / / www . ieee . org / publications[]standard
-s / publications / conferences /
- []
+ [1{C:/Users/gizac/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 53--54
-[]\OT1/ptm/m/n/10 Describe your en-vi-ron-ment, ei-ther one you
- []
+]
+<images/learning_curve_against_random.pdf, id=112, 462.52798pt x 346.89601pt>
+File: images/learning_curve_against_random.pdf Graphic file (type pdf)
 
-
-Underfull \hbox (badness 1460) in paragraph at lines 53--54
-\OT1/ptm/m/n/10 is based on real-world data? Or sim-ply to pro-vide an
- []
-
-<alife.png, id=53, 1670.24pt x 899.36pt>
-File: alife.png Graphic file (type png)
- <use alife.png>
-Package pdftex.def Info: alife.png used on input line 86.
-(pdftex.def)             Requested size: 201.60077pt x 108.5498pt.
+<use images/learning_curve_against_random.pdf>
+Package pdftex.def Info: images/learning_curve_against_random.pdf used on input
+ line 154.
+(pdftex.def)             Requested size: 239.39923pt x 179.55063pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[1{C:/Users/gizac/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}
+<images/histo_size.pdf, id=115, 462.52798pt x 346.89601pt>
+File: images/histo_size.pdf Graphic file (type pdf)
+
+<use images/histo_size.pdf>
+Package pdftex.def Info: images/histo_size.pdf used on input line 191.
+(pdftex.def)             Requested size: 239.39923pt x 179.55063pt.
 
 
-]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 116.
- [2
+LaTeX Warning: `h' float specifier changed to `ht'.
 
- <./alife.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 116.
+[2 <./images/learning_curve_against_random.pdf>]
+
+LaTeX Warning: Citation `rl_agent' on page 3 undefined on input line 221.
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 248.
+[3 <./images/histo_size.pdf>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 248.
  (report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 116.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 116.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 248.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 248.
 Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: EDA5A49EE26D493C22CDCA459CCCDCA3;569.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 116.
+(rerunfilecheck)             Checksum: 0CFC41638913BB37401B62AF8D5DB002;1110.
+
+
+LaTeX Warning: There were undefined references.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 248.
  ) 
 Here is how much of TeX's memory you used:
  6432 strings out of 493333
- 96266 string characters out of 3139242
- 191136 words of memory out of 3000000
- 9885 multiletter control sequences out of 15000+200000
- 44427 words of font info for 86 fonts, out of 3000000 for 9000
+ 96409 string characters out of 3139242
+ 193400 words of memory out of 3000000
+ 9868 multiletter control sequences out of 15000+200000
+ 45019 words of font info for 85 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,8n,28p,626b,316s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 29i,8n,28p,597b,413s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc}<C:/Program Files/Mi
 KTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Program Files/MiKTeX 2.9
 /fonts/type1/public/amsfonts/cm/cmbx7.pfb><C:/Program Files/MiKTeX 2.9/fonts/ty
-pe1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
-ic/amsfonts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
-ts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr
-7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C
-:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program
- Files/MiKTeX 2.9/fonts/type1/urw/courier/ucrr8a.pfb><C:/Program Files/MiKTeX 2
-.9/fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/ur
-w/times/utmbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.p
-fb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (2 pages, 1940917 bytes).
+pe1/public/amsfonts/cm/cmex10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
+ic/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfo
+nts/cm/cmmi7.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
+r10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C
+:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Program 
+Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files/Mi
+KTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Program Files/MiKTeX 2.9/
+fonts/type1/urw/times/utmb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/t
+imes/utmbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmr8a.pfb>
+<C:/Program Files/MiKTeX 2.9/fonts/type1/urw/times/utmri8a.pfb>
+Output written on report.pdf (3 pages, 200318 bytes).
 PDF statistics:
- 137 PDF objects out of 1000 (max. 8388607)
- 23 named destinations out of 1000 (max. 500000)
- 78 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 266 PDF objects out of 1000 (max. 8388607)
+ 43 named destinations out of 1000 (max. 500000)
+ 139 words of extra memory for PDF output out of 10000 (max. 10000000)
 
