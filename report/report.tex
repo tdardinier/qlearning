@@ -85,7 +85,7 @@ There exists other algorithms which balance the accuracy of the prediction and t
 \section{The Environment}
 We designed a simplified \emph{slither.io} environment while trying to keep the main characteristics of this environment. Several snakes move on a 2D grid. They grow each time they eat a candy, these candies randomly appear on the grid. When the head of a snake collides with a border or another snake, it dies and is tranformed into candies. The snakes aims at maximizing their score at the end of the party, which is equal to their relative size to the total size of all snakes alive.
 
-A snake can move along 4 directions, but the head of the snake can not move backward. Identical to \emph{slither.io} snakes can cross their own tail.
+In comparison with \emph{slither.io} we restrict the possible moves of a snake, only 4 directions are allowed. In fact the grid of our environment looks like the grid of the standard snake game. However identical to \emph{slither.io} snakes can cross their own tail.
 
 In \emph{slither.io} when your snake is long enough, it is more efficient to kill snakes in order to collect highly concentrated candies than to collect randomly spawning candies. In contrast at the beginning of the game, the snake has a short range of vision, hence it is very vulnerable. And therefore the player is push to change its strategy while its snake is growing. The potential for the emergence of a complex and adaptative behaviour makes this environment really interesting.
 
