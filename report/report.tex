@@ -105,10 +105,18 @@ In the minimax algorithm this exploration is exhaustive until a given depth. Thu
 There exists other algorithms which balance the accuracy of the prediction and the computations.
 
 \section{The Environment}
-We designed a simplified \emph{slither.io} environment while trying to keep the main characteristics of this environment. Several snakes move on a 2D grid. They grow each time they eat a candy, these candies randomly appear on the grid. When the head of a snake collides with a border or another snake, it dies and is tranformed into candies. The snakes aims at maximizing their score at the end of the party, which is equal to their relative size to the total size of all snakes alive.
+\subsection{Rules}
+We designed a simplified \emph{slither.io} environment while trying to keep the main characteristics of \emph{slither.io}. The agents are snakes which move on a map which consists in a 2D grid. On this map, candies randomly appear. The snakes grow each time they eat a candy. When the head of a snake collides with a border or another snake, it dies and is tranformed into candies. However identical to \emph{slither.io} snakes can cross their own tail. The snakes aim at maximizing their score at the end of the party, which is equal to the ratio between their size and the total size of all snakes alive.
 
-In comparison with \emph{slither.io} we restrict the possible moves of a snake, only 4 directions are allowed. In fact the grid of our environment looks like the grid of the standard snake game. However identical to \emph{slither.io} snakes can cross their own tail.
+In comparison with \emph{slither.io} the possible moves of a snake are restricted, only 4 directions are allowed. In fact the grid of our environment looks like the grid of the standard snake game. 
+\begin{figure}[h]
+	\centering
+    \includegraphics[width=0.95\columnwidth]{images/environment.pdf}
+    \caption{\label{environment}View of our environment}
+\end{figure}
 
+
+\subsection{Strategy}
 In \emph{slither.io} when your snake is long enough, it is more efficient to kill snakes in order to collect highly concentrated candies than to collect randomly spawning candies. In contrast at the beginning of the game, the snake has a short range of vision, hence it is very vulnerable. And therefore the player is push to change its strategy while its snake is growing. The potential for the emergence of a complex and adaptative behaviour makes this environment really interesting.
 
 \section{The Agent}
@@ -161,9 +169,9 @@ Finally, we use the following parameters:
 \subsection{The Minimax Agent}
 Minimax is a decision rule where the agent takes a decision assuming that the other snakes take the best decision. It consists in the exhaustive exploration of the tree of possible actions until a certain depth is reached. Then the quality of the current state is evaluated by a cost function. 
 
-First multiple cost functions could be used. We choose a cost function which maximises the size of the snake while minimizing the distance to the closest candy. Given a grid of size $g$, a snake $a$ of length $l$, and the fact that the closest candy to the snake is at distance $d$, the evaluation of the current state equals $l+\tfrac{d}{2g-1}$. This type of cost function seems to be reasonable since the primary goal of the snake is to eat candies. However it prevents the apparition of more complex strategies since basically the snake just goes to the closest candy. Moreover the snake pessimistically assumes that its opponent always take the best decision. Therefore it might be overly cautious.
+First multiple cost functions could be used. We choose a cost function which maximises the size of the snake while minimizing the distance to the closest candy. Given a grid of size $g$, an agent $a$ of length $l$, and the fact that the closest candy to the snake is at distance $d$, the evaluation of the current state for the snake $a$ equals $l+\tfrac{d}{2g-1}$. This type of cost function seems to be reasonable since the primary goal of the snake is to eat candies. However it prevents the apparition of more complex strategies since basically the snake just goes to the closest candy. Moreover the snake pessimistically assumes that its opponent always take the best decision. Therefore it might be overly cautious.
 
-Moreover this strategy is computational intensive, to be really efficient it needs to explore as much states as possible. We plan to implement an alpha-beta prunning to avoid this lack. 
+This strategy is computational intensive, to be really efficient it needs to explore as much states as possible. We plan to implement an alpha-beta prunning to avoid this lack. 
 
 \section{Results and Discussion}
 
