@@ -1,5 +1,26 @@
 # FAQ
 
+Frequently Asked Questions (Updated 13/03/2018).
+
+
+## [ONE OF] THE PAPERS I'M ASKED TO REVIEW IS OF POOR QUALITY OR INCOMPLETE
+
+It was stated that grading is done on the final version, therefore some people
+may submit a partially completed initial report, intending to finish later.
+
+The paper you recieve should describe at least an agent and an environment.  
+(If it does not -- simply indicate this). It is not your task to decide how 
+good it is. Follow the instructions in the review form. If there is not much
+material/results -- you should instead suggest some development/experiments.
+
+## I DIDN'T RECIEVE THE SAME PAPER TO REVIEW AS MY TEAMMATE(S)
+
+The reviewing process is an individual component. On the other hand, the 
+response to the reviews your team recieve is a team component.
+
+------------------------------------------------------------------------
+
+
 ## DO WE HAVE TO SUBMIT OUR CODE?
 
 You should include a link in the report to your code. This should be sufficient.
@@ -40,3 +61,4 @@ cannot be adatped for this environment - simply explain why.
 
 Indeed, it is good to check first if an idea is feasible if you are not sure. 
 Send an email to, or approach one of the teaching coordinators during the labs.
+

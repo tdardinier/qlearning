@@ -1,0 +1,19 @@
+To run correctly, you can install the requirements with "pip -r install requirements.txt"
+To run a demo, just type "python demo.py"
+
+---------------------------------------------------------------------------
+
+The demos:
+
+1. demo_compare_rl_minimax.py
+It loads the RL agent from the file "snake.csv" and the Minimax agent, and makes them fight against each other.
+
+2. demo_play_yourself.py
+It allows you to play against a trained RL agent "snake.csv" and the Minimax agent.
+
+3. demo_self_learning.py
+Launches the demo with an "empty" RL agent and a random agent, and shows how the RL agent learns over the episodes.
+
+---------------------------------------------------------------------------
+
+alife_agent.py is the RL agent adapted to the ALife environment.

@@ -5,7 +5,7 @@ import random as rd
 from snake_env import Render, Map
 from IA import IA_rl, IA_random, IA_minimax
 
-n_agents = 3
+n_agents = 2
 n_candies = 10
 gridsize = 30
 
