@@ -93,7 +93,7 @@ If $\tau \to \infty$, then the agent acts almost totally randomly.
 If $\tau \to 0$, then the agent almost always chooses the best action.
 \cite{intro-rl}
 \[
-    P\left(a_t = a\right) = \frac{\exp\left(Q^t(s_t, a) / \tau\right)}{\sum\limits_b \exp\left(Q^t(s_t, b)\right) / \tau}
+    P\left(a_t = a\right) = \frac{\exp\left(Q^t(s_t, a) / \tau\right)}{\sum\limits_b \exp\left(Q^t(s_t, b) / \tau\right)}
 \]
 
 
@@ -111,7 +111,7 @@ We designed a simplified \emph{slither.io} environment while trying to keep the 
 In comparison with \emph{slither.io} the possible moves of a snake are restricted, only 4 directions are allowed. In fact the grid of our environment looks like the grid of the standard snake game. 
 \begin{figure}[h]
 	\centering
-    \includegraphics[width=0.95\columnwidth]{images/environment.pdf}
+    \includegraphics[width=1.05\columnwidth]{images/environment.pdf}
     \caption{\label{environment}View of our environment}
 \end{figure}
 
@@ -160,7 +160,7 @@ It will also learn to avoid other snakes.
 
 Finally, we use the following parameters:
 \begin{itemize}
-    \item $\epsilon = 0.1$ in the case of $\epsilon$-greedy exploration.
+    \item $\epsilon = 0.01$ in the case of $\epsilon$-greedy exploration.
     \item $\tau = 0.1$ in the case of Softmax exploration.
     \item $\alpha = 0.2$. A learning rate so high is strong enough because the inputs and the best actions to take are highly correlated.
     \item $\gamma = 0.9$. We don't use $1$ to make it clear that the best path is always the shortest, but it is near $1$ since we care about the future almost as much as the present.
@@ -186,15 +186,20 @@ The \emph{RL} agent is used in the setting of the softmax exploration and the Q-
 
 \begin{figure}[h]
 	\centering
-    \includegraphics[width=0.95\columnwidth]{images/learning_curve_against_random.pdf}
-    \caption{\label{learning_curve_against_random}The learning curve of the RL agent against a random one.}
+    \includegraphics[width=0.95\columnwidth]{images/learning_curves.pdf}
+    \caption{\label{learning_curve_against_random}The learning curves of the RL agent against a random one.}
 \end{figure}
 
-To analyze the learning time of the \emph{RL} agent, we simulate it against the \emph{Random} agent.
-At the beginning, the \emph{RL} agent knows nothing.
-We run $5000$ games, and we compute the frequency of victories for the \emph{RL} agent for every chunk of $100$ games.
+To analyze the learning time of the \emph{RL} agent in different settings, we simulate it against the \emph{Random} agent.
+At the beginning, the \emph{RL} agent doesn't know anything.
+We run $2000$ games, and we compute the overall average frequency of victories for the \emph{RL} agent for every game played so far.
 The results are presented on Figure~\ref{learning_curve_against_random}.
 As we can see, with only a few hundreds games, this agent is far better than the \emph{Random} one.
+
+Plus, the $\epsilon$-greedy approach seems to be weaker than the softmax one.
+There are two explanations for that.
+First, this measure is a bit biased, because the $epsilon$-greedy approach takes $1$\% of the time a random (thus often wrong) decision.
+Second, there are a lot of states, and the softmax explores in a better way the best states, whereas the $epsilon$-greedy one explores a lot of useless states.
 
 \subsubsection{Performance of the agents}
 

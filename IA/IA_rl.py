@@ -10,15 +10,15 @@ vision_walls_max = 2
 odorat_candies_max = 8
 odorat_snakes_max = 4
 
-epsilon = 0.1
+epsilon = 0.01
 tau = 0.1
 alpha = 0.2
 gamma = 0.9
 reward_dead = -10
 reward_candy = 1
 
-use_epsilon_greedy = False # Softmax otherwise
-use_sarsa = False # Q-Learning otherwise
+use_epsilon_greedy = True # Softmax otherwise
+use_sarsa = True # Q-Learning otherwise
 
 MOVES = [
     (1, 0),

@@ -10,7 +10,7 @@ vision_walls_max = 2
 odorat_candies_max = 8
 odorat_snakes_max = 4
 
-epsilon = 0.1
+epsilon = 0.01
 tau = 0.1
 alpha = 0.2
 gamma = 0.9
