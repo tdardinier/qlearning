@@ -1,4 +1,8 @@
-To run correctly, you can install the requirements with "pip -r install requirements.txt"
+WARNING: USE PYTHON3 WITH THIS PROJECT
+
+---------------------------------------------------------------------------
+
+To run correctly, you can install the requirements with "pip install -r requirements.txt"
 To run a demo, just type "python demo.py"
 
 ---------------------------------------------------------------------------
